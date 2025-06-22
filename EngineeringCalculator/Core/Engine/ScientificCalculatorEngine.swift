@@ -75,6 +75,17 @@ class ScientificCalculatorEngine: CalculatorEngine {
             return false
         }
         
+        // 길이 제한 (매우 긴 수식 방지)
+        if trimmed.count > 1000 {
+            return false
+        }
+        
+        // 허용되지 않는 문자 체크
+        let allowedCharacterSet = CharacterSet(charactersIn: "0123456789.+-*/^()πe sincoatanlgbqrxp ")
+        if trimmed.rangeOfCharacter(from: allowedCharacterSet.inverted) != nil {
+            return false
+        }
+        
         // 기본적인 유효성 검증
         do {
             // 괄호 균형 검증
@@ -112,6 +123,11 @@ class ScientificCalculatorEngine: CalculatorEngine {
             return result > 0 ? "∞" : "-∞"
         }
         
+        // 0에 가까운 매우 작은 값은 0으로 처리
+        if abs(result) < 1e-14 {
+            return "0"
+        }
+        
         // 매우 큰 수나 작은 수는 과학적 표기법 사용
         let absResult = abs(result)
         if absResult >= 1e10 || (absResult > 0 && absResult < 1e-4) {
@@ -119,7 +135,14 @@ class ScientificCalculatorEngine: CalculatorEngine {
         }
         
         // 일반 숫자 포맷팅
-        return numberFormatter.string(from: NSNumber(value: result)) ?? "오류"
+        let formatted = numberFormatter.string(from: NSNumber(value: result)) ?? "오류"
+        
+        // 불필요한 소수점 제거 (예: 5.0000 → 5)
+        if let formattedNumber = Double(formatted), formattedNumber.isInteger {
+            return String(Int(formattedNumber))
+        }
+        
+        return formatted
     }
     
     // MARK: - Private Helper Methods

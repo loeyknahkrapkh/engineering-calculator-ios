@@ -46,7 +46,7 @@ class ExpressionParser {
     private let constants: [String: Double] = [
         "π": Double.pi,
         "pi": Double.pi,
-        "e": 2.718281828459045  // exp(1.0) 대신 하드코딩된 값 사용
+        "e": exp(1.0)  // 더 정확한 자연상수 e
     ]
     
     // MARK: - Public Methods
@@ -56,25 +56,33 @@ class ExpressionParser {
     /// - Returns: 토큰 배열
     /// - Throws: CalculatorError
     func tokenize(_ expression: String) throws -> [Token] {
+        // 빈 문자열 검증
+        guard !expression.trimmingCharacters(in: .whitespaces).isEmpty else {
+            throw CalculatorError.invalidExpression
+        }
+        
+        // 음수 처리를 위한 전처리
+        let preprocessed = preprocessNegativeNumbers(expression)
+        
         var tokens: [Token] = []
-        var i = expression.startIndex
+        var i = preprocessed.startIndex
         let maxIterations = 1000  // 무한루프 방지
         var iterations = 0
         
-        while i < expression.endIndex && iterations < maxIterations {
-            let char = expression[i]
+        while i < preprocessed.endIndex && iterations < maxIterations {
+            let char = preprocessed[i]
             let previousIndex = i  // 무한루프 감지용
             
             // 공백 건너뛰기
             if char.isWhitespace {
-                i = expression.index(after: i)
+                i = preprocessed.index(after: i)
                 iterations += 1
                 continue
             }
             
             // 숫자 파싱
             if char.isNumber || char == "." {
-                let (number, nextIndex) = try parseNumber(from: expression, startIndex: i)
+                let (number, nextIndex) = try parseNumber(from: preprocessed, startIndex: i)
                 tokens.append(.number(number))
                 i = nextIndex
                 
@@ -88,7 +96,7 @@ class ExpressionParser {
             
             // 알파벳 (함수명 또는 상수)
             if char.isLetter || char == "π" {
-                let (identifier, nextIndex) = parseIdentifier(from: expression, startIndex: i)
+                let (identifier, nextIndex) = parseIdentifier(from: preprocessed, startIndex: i)
                 
                 // 빈 식별자 체크 (무한루프 방지)
                 guard !identifier.isEmpty else {
@@ -124,11 +132,6 @@ class ExpressionParser {
             case ")":
                 tokens.append(.rightParenthesis)
             case "+", "-", "*", "/", "^":
-                // 연속된 연산자 체크
-                if let lastToken = tokens.last,
-                   case .operator(_) = lastToken {
-                    throw CalculatorError.invalidExpression
-                }
                 tokens.append(.operator(String(char)))
             case "×":
                 tokens.append(.operator("*"))
@@ -138,7 +141,7 @@ class ExpressionParser {
                 throw CalculatorError.invalidExpression
             }
             
-            i = expression.index(after: i)
+            i = preprocessed.index(after: i)
             iterations += 1
         }
         
@@ -146,6 +149,14 @@ class ExpressionParser {
         if iterations >= maxIterations {
             throw CalculatorError.invalidExpression
         }
+        
+        // 빈 토큰 배열 검증
+        guard !tokens.isEmpty else {
+            throw CalculatorError.invalidExpression
+        }
+        
+        // 토큰 배열 유효성 검증
+        try validateTokenSequence(tokens)
         
         return tokens
     }
@@ -346,6 +357,106 @@ class ExpressionParser {
         return openCount == 0
     }
     
+    // MARK: - Private Preprocessing Methods
+    
+    /// 음수 처리를 위한 전처리
+    /// - Parameter expression: 원본 수식
+    /// - Returns: 전처리된 수식
+    private func preprocessNegativeNumbers(_ expression: String) -> String {
+        var result = expression
+        
+        // 함수 뒤의 음수를 처리 (예: "ln(-1)" → "ln(0-1)")
+        let functionPattern = #"(\b(?:sin|cos|tan|asin|acos|atan|ln|log|log2|exp|sqrt|abs|cbrt|pow10)\s*\(\s*)-"#
+        result = result.replacingOccurrences(of: functionPattern, with: "$10-", options: .regularExpression)
+        
+        // 괄호 시작 부분의 음수 처리 (예: "(-1)" → "(0-1)")
+        result = result.replacingOccurrences(of: "(-", with: "(0-")
+        
+        // 수식 시작 부분의 음수 처리 (예: "-5" → "0-5")
+        if result.hasPrefix("-") {
+            result = "0" + result
+        }
+        
+        return result
+    }
+    
+    // MARK: - Private Validation Methods
+    
+    /// 토큰 시퀀스의 유효성을 검증
+    /// - Parameter tokens: 검증할 토큰 배열
+    /// - Throws: CalculatorError
+    private func validateTokenSequence(_ tokens: [Token]) throws {
+        guard !tokens.isEmpty else {
+            throw CalculatorError.invalidExpression
+        }
+        
+        var previousToken: Token? = nil
+        var openParenthesesCount = 0
+        
+        for (index, token) in tokens.enumerated() {
+            switch token {
+            case .number(_), .constant(_):
+                // 숫자나 상수 다음에 또 다른 숫자/상수가 오면 에러
+                if let prev = previousToken,
+                   case .number(_) = prev {
+                    throw CalculatorError.invalidExpression
+                }
+                if let prev = previousToken,
+                   case .constant(_) = prev {
+                    throw CalculatorError.invalidExpression
+                }
+                
+            case .operator(let op):
+                // 연산자가 마지막에 오면 에러
+                if index == tokens.count - 1 {
+                    throw CalculatorError.missingOperand
+                }
+                
+                // 연산자가 처음에 오는 경우는 음수/양수 부호일 수 있음
+                if index == 0 && !(op == "+" || op == "-") {
+                    throw CalculatorError.invalidExpression
+                }
+                
+                // 연속된 연산자 체크
+                if let prev = previousToken,
+                   case .operator(let prevOp) = prev {
+                    // 같은 연산자가 연속으로 오는 경우 (예: "++", "--", "**")
+                    if op == prevOp {
+                        throw CalculatorError.invalidExpression
+                    }
+                    // 일반적으로 연속된 연산자는 허용하지 않음 (음수 처리는 전처리에서 해결)
+                    throw CalculatorError.invalidExpression
+                }
+                
+            case .function(_):
+                // 함수 다음에는 반드시 여는 괄호가 와야 함 (암시적으로 처리됨)
+                break
+                
+            case .leftParenthesis:
+                openParenthesesCount += 1
+                
+            case .rightParenthesis:
+                openParenthesesCount -= 1
+                if openParenthesesCount < 0 {
+                    throw CalculatorError.invalidParentheses
+                }
+                
+                // 빈 괄호 체크
+                if let prev = previousToken,
+                   case .leftParenthesis = prev {
+                    throw CalculatorError.invalidExpression
+                }
+            }
+            
+            previousToken = token
+        }
+        
+        // 괄호 균형 체크
+        if openParenthesesCount != 0 {
+            throw CalculatorError.invalidParentheses
+        }
+    }
+    
     // MARK: - Private Helper Methods
     
     /// 연산자 우선순위 비교
@@ -497,7 +608,7 @@ class ExpressionParser {
         case "cos":
             return MathFunctions.cosine(operand, angleUnit: angleUnit)
         case "tan":
-            return MathFunctions.tangent(operand, angleUnit: angleUnit)
+            return try MathFunctions.tangent(operand, angleUnit: angleUnit)
             
         // 역삼각함수
         case "asin":

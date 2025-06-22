@@ -2,427 +2,354 @@ import Testing
 import Foundation
 @testable import EngineeringCalculator
 
-/// 수학 함수들의 기능을 테스트하는 구조체
+@Suite("Math Functions Tests")
 struct MathFunctionsTests {
     
     // MARK: - Basic Operations Tests
     
-    @Test("덧셈 연산")
-    func addition() {
-        // Given
-        let lhs = 5.0
-        let rhs = 3.0
-        
-        // When
-        let result = MathFunctions.add(lhs, rhs)
-        
-        // Then
-        #expect(abs(result - 8.0) < 0.0001, "덧셈 결과가 올바르지 않습니다")
+    @Test("기본 사칙연산 테스트")
+    func testBasicOperations() {
+        #expect(MathFunctions.add(2.0, 3.0) == 5.0)
+        #expect(MathFunctions.subtract(5.0, 3.0) == 2.0)
+        #expect(MathFunctions.multiply(4.0, 3.0) == 12.0)
     }
     
-    @Test("뺄셈 연산")
-    func subtraction() {
-        // Given
-        let lhs = 5.0
-        let rhs = 3.0
-        
-        // When
-        let result = MathFunctions.subtract(lhs, rhs)
-        
-        // Then
-        #expect(abs(result - 2.0) < 0.0001, "뺄셈 결과가 올바르지 않습니다")
+    @Test("나눗셈 테스트")
+    func testDivision() throws {
+        #expect(try MathFunctions.divide(10.0, 2.0) == 5.0)
+        #expect(try MathFunctions.divide(7.0, 2.0) == 3.5)
     }
     
-    @Test("곱셈 연산")
-    func multiplication() {
-        // Given
-        let lhs = 5.0
-        let rhs = 3.0
-        
-        // When
-        let result = MathFunctions.multiply(lhs, rhs)
-        
-        // Then
-        #expect(abs(result - 15.0) < 0.0001, "곱셈 결과가 올바르지 않습니다")
-    }
-    
-    @Test("나눗셈 연산")
-    func division() throws {
-        // Given
-        let lhs = 6.0
-        let rhs = 3.0
-        
-        // When
-        let result = try MathFunctions.divide(lhs, rhs)
-        
-        // Then
-        #expect(abs(result - 2.0) < 0.0001, "나눗셈 결과가 올바르지 않습니다")
-    }
-    
-    @Test("0으로 나누기 에러")
-    func divisionByZeroThrowsError() {
-        // Given
-        let lhs = 5.0
-        let rhs = 0.0
-        
-        // When & Then
+    @Test("0으로 나누기 에러 테스트")
+    func testDivisionByZeroError() {
         #expect(throws: CalculatorError.divisionByZero) {
-            try MathFunctions.divide(lhs, rhs)
+            try MathFunctions.divide(5.0, 0.0)
+        }
+        
+        #expect(throws: CalculatorError.divisionByZero) {
+            try MathFunctions.divide(-3.0, 0.0)
         }
     }
     
-    @Test("거듭제곱 연산")
-    func power() throws {
-        // Given
-        let base = 2.0
-        let exponent = 3.0
-        
-        // When
-        let result = try MathFunctions.power(base, exponent)
-        
-        // Then
-        #expect(abs(result - 8.0) < 0.0001, "거듭제곱 결과가 올바르지 않습니다")
+    // MARK: - Power Function Tests
+    
+    @Test("거듭제곱 테스트")
+    func testPowerFunction() throws {
+        #expect(try MathFunctions.power(2.0, 3.0) == 8.0)
+        #expect(try MathFunctions.power(5.0, 2.0) == 25.0)
+        #expect(abs(try MathFunctions.power(2.0, 0.5) - sqrt(2.0)) < 1e-10)
     }
     
-    @Test("0제곱 연산")
-    func powerWithZeroExponent() throws {
-        // Given
-        let base = 5.0
-        let exponent = 0.0
+    @Test("거듭제곱 에러 처리 테스트")
+    func testPowerErrorHandling() {
+        // 0^(-1) = 1/0 (division by zero)
+        #expect(throws: CalculatorError.divisionByZero) {
+            try MathFunctions.power(0.0, -1.0)
+        }
         
-        // When
-        let result = try MathFunctions.power(base, exponent)
-        
-        // Then
-        #expect(abs(result - 1.0) < 0.0001, "0제곱은 1이어야 합니다")
+        // (-2)^(0.5) (음수의 비정수 거듭제곱)
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.power(-2.0, 0.5)
+        }
     }
     
     // MARK: - Trigonometric Functions Tests
     
-    @Test("사인 함수 (도 단위)")
-    func sineWithDegrees() {
-        // Given
-        let angle = 30.0
-        let angleUnit = AngleUnit.degree
+    @Test("삼각함수 degree 모드 테스트")
+    func testTrigonometricFunctionsDegree() {
+        // sin(0°) = 0
+        let sin0 = MathFunctions.sine(0.0, angleUnit: .degree)
+        #expect(abs(sin0) < 1e-15)
         
-        // When
-        let result = MathFunctions.sine(angle, angleUnit: angleUnit)
+        // sin(90°) = 1
+        let sin90 = MathFunctions.sine(90.0, angleUnit: .degree)
+        #expect(abs(sin90 - 1.0) < 1e-10)
         
-        // Then
-        #expect(abs(result - 0.5) < 0.0001, "sin(30°) = 0.5이어야 합니다")
+        // cos(0°) = 1
+        let cos0 = MathFunctions.cosine(0.0, angleUnit: .degree)
+        #expect(abs(cos0 - 1.0) < 1e-10)
+        
+        // cos(90°) = 0
+        let cos90 = MathFunctions.cosine(90.0, angleUnit: .degree)
+        #expect(abs(cos90) < 1e-15)
+        
+        // tan(45°) = 1
+        let tan45 = try! MathFunctions.tangent(45.0, angleUnit: .degree)
+        #expect(abs(tan45 - 1.0) < 1e-10)
     }
     
-    @Test("사인 함수 (라디안 단위)")
-    func sineWithRadians() {
-        // Given
-        let angle = Double.pi / 6  // 30도를 라디안으로
-        let angleUnit = AngleUnit.radian
+    @Test("삼각함수 radian 모드 테스트")
+    func testTrigonometricFunctionsRadian() {
+        // sin(π/2) = 1
+        let sinPiHalf = MathFunctions.sine(Double.pi / 2, angleUnit: .radian)
+        #expect(abs(sinPiHalf - 1.0) < 1e-10)
         
-        // When
-        let result = MathFunctions.sine(angle, angleUnit: angleUnit)
+        // cos(π) = -1
+        let cosPi = MathFunctions.cosine(Double.pi, angleUnit: .radian)
+        #expect(abs(cosPi + 1.0) < 1e-10)
         
-        // Then
-        #expect(abs(result - 0.5) < 0.0001, "sin(π/6) = 0.5이어야 합니다")
+        // tan(π/4) = 1
+        let tanPiFourth = try! MathFunctions.tangent(Double.pi / 4, angleUnit: .radian)
+        #expect(abs(tanPiFourth - 1.0) < 1e-10)
     }
     
-    @Test("코사인 함수 (도 단위)")
-    func cosineWithDegrees() {
-        // Given
-        let angle = 60.0
-        let angleUnit = AngleUnit.degree
+    @Test("탄젠트 함수 정의역 에러 테스트")
+    func testTangentDomainError() {
+        // tan(90°)는 정의되지 않음
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.tangent(90.0, angleUnit: .degree)
+        }
         
-        // When
-        let result = MathFunctions.cosine(angle, angleUnit: angleUnit)
+        // tan(270°)는 정의되지 않음
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.tangent(270.0, angleUnit: .degree)
+        }
         
-        // Then
-        #expect(abs(result - 0.5) < 0.0001, "cos(60°) = 0.5이어야 합니다")
+        // tan(π/2)는 정의되지 않음
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.tangent(Double.pi / 2, angleUnit: .radian)
+        }
     }
     
-    @Test("탄젠트 함수 (도 단위)")
-    func tangentWithDegrees() {
-        // Given
-        let angle = 45.0
-        let angleUnit = AngleUnit.degree
+    @Test("삼각함수 무한대 입력 처리")
+    func testTrigonometricInfiniteInput() {
+        let sinInf = MathFunctions.sine(Double.infinity, angleUnit: .degree)
+        #expect(sinInf.isNaN)
         
-        // When
-        let result = MathFunctions.tangent(angle, angleUnit: angleUnit)
+        let cosInf = MathFunctions.cosine(Double.infinity, angleUnit: .degree)
+        #expect(cosInf.isNaN)
         
-        // Then
-        #expect(abs(result - 1.0) < 0.0001, "tan(45°) = 1.0이어야 합니다")
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.tangent(Double.infinity, angleUnit: .degree)
+        }
     }
     
     // MARK: - Inverse Trigonometric Functions Tests
     
-    @Test("아크사인 함수")
-    func arcsine() throws {
-        // Given
-        let value = 0.5
-        let angleUnit = AngleUnit.degree
+    @Test("역삼각함수 테스트")
+    func testInverseTrigonometricFunctions() throws {
+        // asin(1) = 90° (degree mode)
+        let asin1 = try MathFunctions.arcsine(1.0, angleUnit: .degree)
+        #expect(abs(asin1 - 90.0) < 1e-10)
         
-        // When
-        let result = try MathFunctions.arcsine(value, angleUnit: angleUnit)
+        // acos(0) = 90° (degree mode)
+        let acos0 = try MathFunctions.arccosine(0.0, angleUnit: .degree)
+        #expect(abs(acos0 - 90.0) < 1e-10)
         
-        // Then
-        #expect(abs(result - 30.0) < 0.0001, "asin(0.5) = 30°이어야 합니다")
+        // atan(1) = 45° (degree mode)
+        let atan1 = MathFunctions.arctangent(1.0, angleUnit: .degree)
+        #expect(abs(atan1 - 45.0) < 1e-10)
     }
     
-    @Test("아크사인 함수 정의역 에러")
-    func arcsineWithInvalidValue() {
-        // Given
-        let value = 1.5  // 범위를 벗어난 값
-        let angleUnit = AngleUnit.degree
-        
-        // When & Then
+    @Test("역삼각함수 정의역 에러 테스트")
+    func testInverseTrigonometricDomainError() {
+        // asin(2) - 범위 초과
         #expect(throws: CalculatorError.domainError) {
-            try MathFunctions.arcsine(value, angleUnit: angleUnit)
+            try MathFunctions.arcsine(2.0, angleUnit: .degree)
         }
-    }
-    
-    @Test("아크코사인 함수")
-    func arccosine() throws {
-        // Given
-        let value = 0.5
-        let angleUnit = AngleUnit.degree
         
-        // When
-        let result = try MathFunctions.arccosine(value, angleUnit: angleUnit)
+        // asin(-2) - 범위 초과
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.arcsine(-2.0, angleUnit: .degree)
+        }
         
-        // Then
-        #expect(abs(result - 60.0) < 0.0001, "acos(0.5) = 60°이어야 합니다")
-    }
-    
-    @Test("아크탄젠트 함수")
-    func arctangent() {
-        // Given
-        let value = 1.0
-        let angleUnit = AngleUnit.degree
+        // acos(1.5) - 범위 초과
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.arccosine(1.5, angleUnit: .degree)
+        }
         
-        // When
-        let result = MathFunctions.arctangent(value, angleUnit: angleUnit)
-        
-        // Then
-        #expect(abs(result - 45.0) < 0.0001, "atan(1.0) = 45°이어야 합니다")
+        // acos(-1.5) - 범위 초과
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.arccosine(-1.5, angleUnit: .degree)
+        }
     }
     
     // MARK: - Logarithmic Functions Tests
     
-    @Test("자연로그 함수")
-    func naturalLog() throws {
-        // Given
-        let value = exp(1.0)  // 자연상수 e
+    @Test("로그함수 테스트")
+    func testLogarithmicFunctions() throws {
+        // ln(e) = 1
+        let lnE = try MathFunctions.naturalLog(exp(1.0))
+        #expect(abs(lnE - 1.0) < 1e-10)
         
-        // When
-        let result = try MathFunctions.naturalLog(value)
+        // log(10) = 1
+        let log10 = try MathFunctions.commonLog(10.0)
+        #expect(abs(log10 - 1.0) < 1e-10)
         
-        // Then
-        #expect(abs(result - 1.0) < 0.0001, "ln(e) = 1이어야 합니다")
+        // log2(8) = 3
+        let log2_8 = try MathFunctions.binaryLog(8.0)
+        #expect(abs(log2_8 - 3.0) < 1e-10)
     }
     
-    @Test("자연로그 함수 정의역 에러")
-    func naturalLogWithNegativeValue() {
-        // Given
-        let value = -1.0
-        
-        // When & Then
+    @Test("로그함수 정의역 에러 테스트")
+    func testLogarithmicDomainError() {
+        // ln(-1) - 음수 입력
         #expect(throws: CalculatorError.domainError) {
-            try MathFunctions.naturalLog(value)
+            try MathFunctions.naturalLog(-1.0)
         }
-    }
-    
-    @Test("상용로그 함수")
-    func commonLog() throws {
-        // Given
-        let value = 100.0
         
-        // When
-        let result = try MathFunctions.commonLog(value)
+        // ln(0) - 0 입력
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.naturalLog(0.0)
+        }
         
-        // Then
-        #expect(abs(result - 2.0) < 0.0001, "log(100) = 2이어야 합니다")
-    }
-    
-    @Test("이진로그 함수")
-    func binaryLog() throws {
-        // Given
-        let value = 8.0
+        // log(-5) - 음수 입력
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.commonLog(-5.0)
+        }
         
-        // When
-        let result = try MathFunctions.binaryLog(value)
+        // log2(0) - 0 입력
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.binaryLog(0.0)
+        }
         
-        // Then
-        #expect(abs(result - 3.0) < 0.0001, "log₂(8) = 3이어야 합니다")
+        // 무한대 입력
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.naturalLog(Double.infinity)
+        }
     }
     
     // MARK: - Exponential Functions Tests
     
-    @Test("자연지수 함수")
-    func naturalExp() throws {
-        // Given
-        let value = 1.0
+    @Test("지수함수 테스트")
+    func testExponentialFunctions() throws {
+        // exp(0) = 1
+        let exp0 = try MathFunctions.naturalExp(0.0)
+        #expect(abs(exp0 - 1.0) < 1e-10)
         
-        // When
-        let result = try MathFunctions.naturalExp(value)
+        // exp(1) ≈ e
+        let exp1 = try MathFunctions.naturalExp(1.0)
+        #expect(abs(exp1 - exp(1.0)) < 1e-10)
         
-        // Then
-        #expect(abs(result - exp(1.0)) < 0.0001, "e¹ = e이어야 합니다")
+        // 10^2 = 100
+        let pow10_2 = try MathFunctions.powerOfTen(2.0)
+        #expect(abs(pow10_2 - 100.0) < 1e-10)
     }
     
-    @Test("10의 거듭제곱 함수")
-    func powerOfTen() throws {
-        // Given
-        let value = 2.0
+    @Test("지수함수 오버플로우 에러 테스트")
+    func testExponentialOverflowError() {
+        // exp(1000) - 오버플로우
+        #expect(throws: CalculatorError.overflow) {
+            try MathFunctions.naturalExp(1000.0)
+        }
         
-        // When
-        let result = try MathFunctions.powerOfTen(value)
+        // 10^500 - 오버플로우
+        #expect(throws: CalculatorError.overflow) {
+            try MathFunctions.powerOfTen(500.0)
+        }
+    }
+    
+    @Test("지수함수 언더플로우 처리 테스트")
+    func testExponentialUnderflowHandling() throws {
+        // exp(-1000) ≈ 0 (언더플로우는 0으로 처리)
+        let expNeg1000 = try MathFunctions.naturalExp(-1000.0)
+        #expect(expNeg1000 == 0.0)
         
-        // Then
-        #expect(abs(result - 100.0) < 0.0001, "10² = 100이어야 합니다")
+        // 10^(-500) ≈ 0 (언더플로우는 0으로 처리)
+        let pow10Neg500 = try MathFunctions.powerOfTen(-500.0)
+        #expect(pow10Neg500 == 0.0)
     }
     
     // MARK: - Other Functions Tests
     
-    @Test("제곱근 함수")
-    func squareRoot() throws {
-        // Given
-        let value = 9.0
+    @Test("제곱근 함수 테스트")
+    func testSquareRootFunction() throws {
+        // sqrt(4) = 2
+        let sqrt4 = try MathFunctions.squareRoot(4.0)
+        #expect(abs(sqrt4 - 2.0) < 1e-10)
         
-        // When
-        let result = try MathFunctions.squareRoot(value)
+        // sqrt(0) = 0
+        let sqrt0 = try MathFunctions.squareRoot(0.0)
+        #expect(sqrt0 == 0.0)
         
-        // Then
-        #expect(abs(result - 3.0) < 0.0001, "√9 = 3이어야 합니다")
+        // sqrt(2) ≈ 1.414...
+        let sqrt2 = try MathFunctions.squareRoot(2.0)
+        #expect(abs(sqrt2 - sqrt(2.0)) < 1e-10)
     }
     
-    @Test("제곱근 함수 정의역 에러")
-    func squareRootWithNegativeValue() {
-        // Given
-        let value = -1.0
-        
-        // When & Then
+    @Test("제곱근 정의역 에러 테스트")
+    func testSquareRootDomainError() {
+        // sqrt(-1) - 음수 입력
         #expect(throws: CalculatorError.domainError) {
-            try MathFunctions.squareRoot(value)
+            try MathFunctions.squareRoot(-1.0)
+        }
+        
+        // sqrt(-4) - 음수 입력
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.squareRoot(-4.0)
+        }
+        
+        // 무한대 입력
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.squareRoot(Double.infinity)
         }
     }
     
-    @Test("절댓값 함수")
-    func absoluteValue() {
-        // Given
-        let positiveValue = 5.0
-        let negativeValue = -5.0
-        let zeroValue = 0.0
+    @Test("절댓값 함수 테스트")
+    func testAbsoluteValueFunction() {
+        #expect(MathFunctions.absoluteValue(5.0) == 5.0)
+        #expect(MathFunctions.absoluteValue(-3.0) == 3.0)
+        #expect(MathFunctions.absoluteValue(0.0) == 0.0)
         
-        // When
-        let positiveResult = MathFunctions.absoluteValue(positiveValue)
-        let negativeResult = MathFunctions.absoluteValue(negativeValue)
-        let zeroResult = MathFunctions.absoluteValue(zeroValue)
-        
-        // Then
-        #expect(abs(positiveResult - 5.0) < 0.0001, "|5| = 5이어야 합니다")
-        #expect(abs(negativeResult - 5.0) < 0.0001, "|-5| = 5이어야 합니다")
-        #expect(abs(zeroResult - 0.0) < 0.0001, "|0| = 0이어야 합니다")
+        // 무한대 입력 처리
+        let absInf = MathFunctions.absoluteValue(Double.infinity)
+        #expect(absInf.isNaN)
     }
     
-    @Test("세제곱근 함수")
-    func cubeRoot() throws {
-        // Given
-        let positiveValue = 27.0
-        let negativeValue = -8.0
-        let zeroValue = 0.0
+    @Test("세제곱근 함수 테스트")
+    func testCubeRootFunction() throws {
+        // cbrt(8) = 2
+        let cbrt8 = try MathFunctions.cubeRoot(8.0)
+        #expect(abs(cbrt8 - 2.0) < 1e-10)
         
-        // When
-        let positiveResult = try MathFunctions.cubeRoot(positiveValue)
-        let negativeResult = try MathFunctions.cubeRoot(negativeValue)
-        let zeroResult = try MathFunctions.cubeRoot(zeroValue)
+        // cbrt(-8) = -2
+        let cbrtNeg8 = try MathFunctions.cubeRoot(-8.0)
+        #expect(abs(cbrtNeg8 + 2.0) < 1e-10)
         
-        // Then
-        #expect(abs(positiveResult - 3.0) < 0.0001, "∛27 = 3이어야 합니다")
-        #expect(abs(negativeResult - (-2.0)) < 0.0001, "∛(-8) = -2이어야 합니다")
-        #expect(abs(zeroResult - 0.0) < 0.0001, "∛0 = 0이어야 합니다")
+        // cbrt(0) = 0
+        let cbrt0 = try MathFunctions.cubeRoot(0.0)
+        #expect(cbrt0 == 0.0)
+    }
+    
+    @Test("세제곱근 정의역 에러 테스트")
+    func testCubeRootDomainError() {
+        // 무한대 입력
+        #expect(throws: CalculatorError.domainError) {
+            try MathFunctions.cubeRoot(Double.infinity)
+        }
     }
     
     // MARK: - Mathematical Constants Tests
     
-    @Test("파이 상수")
-    func piConstant() {
-        // When
-        let piValue = MathFunctions.pi
-        
-        // Then
-        #expect(abs(piValue - Double.pi) < 0.0001, "π 값이 올바르지 않습니다")
+    @Test("수학 상수 테스트")
+    func testMathematicalConstants() {
+        #expect(abs(MathFunctions.pi - Double.pi) < 1e-15)
+        #expect(abs(MathFunctions.e - exp(1.0)) < 1e-15)
     }
     
-    @Test("자연상수 e")
-    func eulerConstant() {
-        // When
-        let eValue = MathFunctions.e
+    // MARK: - Edge Cases and Boundary Tests
+    
+    @Test("경계값 테스트")
+    func testBoundaryValues() throws {
+        // 매우 작은 양수
+        let verySmall = 1e-100
+        let lnVerySmall = try MathFunctions.naturalLog(verySmall)
+        #expect(lnVerySmall.isFinite)
         
-        // Then
-        #expect(abs(eValue - exp(1.0)) < 0.0001, "e 값이 올바르지 않습니다")
+        // 1에 가까운 값들
+        let nearOne = 1.0 + 1e-15
+        let lnNearOne = try MathFunctions.naturalLog(nearOne)
+        #expect(abs(lnNearOne) < 1e-14)
     }
     
-    // MARK: - Edge Cases and Complex Tests
-    
-    @Test("삼각함수 특수각 테스트")
-    func trigonometricSpecialAngles() {
-        // sin(0°) = 0, cos(0°) = 1, tan(0°) = 0
-        #expect(abs(MathFunctions.sine(0, angleUnit: .degree) - 0.0) < 0.0001, "sin(0°) = 0이어야 합니다")
-        #expect(abs(MathFunctions.cosine(0, angleUnit: .degree) - 1.0) < 0.0001, "cos(0°) = 1이어야 합니다")
-        #expect(abs(MathFunctions.tangent(0, angleUnit: .degree) - 0.0) < 0.0001, "tan(0°) = 0이어야 합니다")
+    @Test("부동소수점 정밀도 테스트")
+    func testFloatingPointPrecision() {
+        // sin(π) should be very close to 0
+        let sinPi = MathFunctions.sine(Double.pi, angleUnit: .radian)
+        #expect(abs(sinPi) < 1e-15)
         
-        // sin(90°) = 1, cos(90°) = 0
-        #expect(abs(MathFunctions.sine(90, angleUnit: .degree) - 1.0) < 0.0001, "sin(90°) = 1이어야 합니다")
-        #expect(abs(MathFunctions.cosine(90, angleUnit: .degree) - 0.0) < 0.0001, "cos(90°) = 0이어야 합니다")
-    }
-    
-    @Test("로그함수 특수값 테스트")
-    func logarithmSpecialValues() throws {
-        // ln(1) = 0
-        let lnOne = try MathFunctions.naturalLog(1.0)
-        #expect(abs(lnOne - 0.0) < 0.0001, "ln(1) = 0이어야 합니다")
-        
-        // log(1) = 0
-        let logOne = try MathFunctions.commonLog(1.0)
-        #expect(abs(logOne - 0.0) < 0.0001, "log(1) = 0이어야 합니다")
-        
-        // log₂(1) = 0
-        let log2One = try MathFunctions.binaryLog(1.0)
-        #expect(abs(log2One - 0.0) < 0.0001, "log₂(1) = 0이어야 합니다")
-    }
-    
-    @Test("지수함수 특수값 테스트")
-    func exponentialSpecialValues() throws {
-        // e⁰ = 1
-        let expZero = try MathFunctions.naturalExp(0.0)
-        #expect(abs(expZero - 1.0) < 0.0001, "e⁰ = 1이어야 합니다")
-        
-        // 10⁰ = 1
-        let powTenZero = try MathFunctions.powerOfTen(0.0)
-        #expect(abs(powTenZero - 1.0) < 0.0001, "10⁰ = 1이어야 합니다")
-    }
-    
-    @Test("역삼각함수 경계값 테스트")
-    func inverseTrigonometricBoundaryValues() throws {
-        // asin(-1) = -90°, asin(1) = 90°
-        let asinNegOne = try MathFunctions.arcsine(-1.0, angleUnit: .degree)
-        let asinOne = try MathFunctions.arcsine(1.0, angleUnit: .degree)
-        #expect(abs(asinNegOne - (-90.0)) < 0.0001, "asin(-1) = -90°이어야 합니다")
-        #expect(abs(asinOne - 90.0) < 0.0001, "asin(1) = 90°이어야 합니다")
-        
-        // acos(-1) = 180°, acos(1) = 0°
-        let acosNegOne = try MathFunctions.arccosine(-1.0, angleUnit: .degree)
-        let acosOne = try MathFunctions.arccosine(1.0, angleUnit: .degree)
-        #expect(abs(acosNegOne - 180.0) < 0.0001, "acos(-1) = 180°이어야 합니다")
-        #expect(abs(acosOne - 0.0) < 0.0001, "acos(1) = 0°이어야 합니다")
-    }
-    
-    @Test("큰 수 계산 테스트")
-    func largeNumberCalculations() throws {
-        // 큰 수의 거듭제곱
-        let largePower = try MathFunctions.power(10, 6)
-        #expect(abs(largePower - 1000000.0) < 0.0001, "10⁶ = 1,000,000이어야 합니다")
-        
-        // 작은 수의 제곱근
-        let smallSqrt = try MathFunctions.squareRoot(0.0001)
-        #expect(abs(smallSqrt - 0.01) < 0.0001, "√0.0001 = 0.01이어야 합니다")
+        // cos(π/2) should be very close to 0
+        let cosPiHalf = MathFunctions.cosine(Double.pi / 2, angleUnit: .radian)
+        #expect(abs(cosPiHalf) < 1e-15)
     }
 } 

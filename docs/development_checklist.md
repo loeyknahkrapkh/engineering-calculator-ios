@@ -86,11 +86,11 @@
 
 ### 3.1 설정 저장소 구현
 
--   [ ] `SettingsStorage` protocol 정의
--   [ ] `UserDefaultsSettingsStorage` 클래스 구현
--   [ ] 각도 단위 설정 저장/로드
--   [ ] 소수점 자릿수 설정 저장/로드
--   [ ] 첫 실행 여부 저장/로드
+-   [x] `SettingsStorage` protocol 정의
+-   [x] `UserDefaultsSettingsStorage` 클래스 구현
+-   [x] 각도 단위 설정 저장/로드
+-   [x] 소수점 자릿수 설정 저장/로드
+-   [x] 첫 실행 여부 저장/로드
 
 **🔄 Commit Point**: `feat: 설정 저장소 구현`
 

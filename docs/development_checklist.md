@@ -50,11 +50,11 @@
 
 ### 2.2 수식 파서 구현
 
--   [ ] 토큰화(Tokenization) 로직 구현
--   [ ] 중위 표기법을 후위 표기법으로 변환 (Shunting Yard Algorithm)
--   [ ] 후위 표기법 계산 로직 구현
--   [ ] 괄호 처리 로직 구현
--   [ ] 연산자 우선순위 정의
+-   [x] 토큰화(Tokenization) 로직 구현
+-   [x] 중위 표기법을 후위 표기법으로 변환 (Shunting Yard Algorithm)
+-   [x] 후위 표기법 계산 로직 구현
+-   [x] 괄호 처리 로직 구현
+-   [x] 연산자 우선순위 정의
 
 **🔄 Commit Point**: `feat: 수식 파서 및 계산 로직 구현`
 

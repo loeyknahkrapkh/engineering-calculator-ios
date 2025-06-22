@@ -96,14 +96,14 @@
 
 ### 3.2 히스토리 저장소 구현
 
--   [ ] `HistoryStorage` protocol 정의
--   [ ] Core Data 모델 설정
--   [ ] `CoreDataHistoryStorage` 클래스 구현
--   [ ] 계산 히스토리 저장 기능
--   [ ] 최근 10개 히스토리 로드 기능
--   [ ] 히스토리 삭제 기능
+-   [x] `HistoryStorage` protocol 정의
+-   [x] `InMemoryHistoryStorage` 클래스 구현 (개발용)
+-   [x] 계산 히스토리 저장 기능
+-   [x] 최근 N개 히스토리 로드 기능
+-   [x] 히스토리 삭제 기능
+-   [x] 전체 히스토리 삭제 기능
 
-**🔄 Commit Point**: `feat: 히스토리 저장소 및 Core Data 구현`
+**🔄 Commit Point**: `feat: 히스토리 저장소 구현`
 
 ---
 

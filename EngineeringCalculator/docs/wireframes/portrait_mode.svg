@@ -1,0 +1,136 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- iPhone 화면 배경 -->
+  <rect width="375" height="812" fill="#f8f9fa" stroke="#e9ecef" stroke-width="2"/>
+  
+  <!-- 상단 상태바 영역 -->
+  <rect x="0" y="0" width="375" height="44" fill="#ffffff"/>
+  <text x="20" y="28" font-family="SF Pro Display, Arial, sans-serif" font-size="14" font-weight="600" fill="#000000">9:41</text>
+  <text x="355" y="28" font-family="SF Pro Display, Arial, sans-serif" font-size="14" font-weight="600" fill="#000000" text-anchor="end">100%</text>
+  
+  <!-- 앱 제목 -->
+  <text x="187.5" y="80" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="600" fill="#000000" text-anchor="middle">공학용 계산기</text>
+  
+  <!-- Display Area -->
+  <rect x="20" y="100" width="335" height="120" fill="#ffffff" stroke="#e9ecef" stroke-width="1" rx="12"/>
+  
+  <!-- 현재 수식 표시 (작은 텍스트) -->
+  <text x="340" y="130" font-family="SF Mono, Courier, monospace" font-size="14" fill="#6c757d" text-anchor="end">2 + 3 × 4</text>
+  
+  <!-- 결과 표시 (큰 텍스트) -->
+  <text x="340" y="200" font-family="SF Mono, Courier, monospace" font-size="36" font-weight="300" fill="#000000" text-anchor="end">14.0000</text>
+  
+  <!-- 기능 버튼 행 (C, ±, %, ÷) -->
+  <g transform="translate(20, 240)">
+    <!-- C 버튼 -->
+    <rect x="0" y="0" width="75" height="60" fill="#6c757d" rx="12"/>
+    <text x="37.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#ffffff" text-anchor="middle">C</text>
+    
+    <!-- ± 버튼 -->
+    <rect x="85" y="0" width="75" height="60" fill="#6c757d" rx="12"/>
+    <text x="122.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#ffffff" text-anchor="middle">±</text>
+    
+    <!-- % 버튼 -->
+    <rect x="170" y="0" width="75" height="60" fill="#6c757d" rx="12"/>
+    <text x="207.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#ffffff" text-anchor="middle">%</text>
+    
+    <!-- ÷ 버튼 -->
+    <rect x="255" y="0" width="75" height="60" fill="#ff9500" rx="12"/>
+    <text x="292.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="28" font-weight="300" fill="#ffffff" text-anchor="middle">÷</text>
+  </g>
+  
+  <!-- 숫자 및 연산자 버튼 영역 -->
+  <!-- 첫 번째 행 (7, 8, 9, ×) -->
+  <g transform="translate(20, 320)">
+    <rect x="0" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="37.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">7</text>
+    
+    <rect x="85" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="122.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">8</text>
+    
+    <rect x="170" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="207.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">9</text>
+    
+    <rect x="255" y="0" width="75" height="60" fill="#ff9500" rx="12"/>
+    <text x="292.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="28" font-weight="300" fill="#ffffff" text-anchor="middle">×</text>
+  </g>
+  
+  <!-- 두 번째 행 (4, 5, 6, -) -->
+  <g transform="translate(20, 400)">
+    <rect x="0" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="37.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">4</text>
+    
+    <rect x="85" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="122.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">5</text>
+    
+    <rect x="170" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="207.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">6</text>
+    
+    <rect x="255" y="0" width="75" height="60" fill="#ff9500" rx="12"/>
+    <text x="292.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="28" font-weight="300" fill="#ffffff" text-anchor="middle">-</text>
+  </g>
+  
+  <!-- 세 번째 행 (1, 2, 3, +) -->
+  <g transform="translate(20, 480)">
+    <rect x="0" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="37.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">1</text>
+    
+    <rect x="85" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="122.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">2</text>
+    
+    <rect x="170" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="207.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">3</text>
+    
+    <rect x="255" y="0" width="75" height="60" fill="#ff9500" rx="12"/>
+    <text x="292.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="28" font-weight="300" fill="#ffffff" text-anchor="middle">+</text>
+  </g>
+  
+  <!-- 네 번째 행 (0, ., =) -->
+  <g transform="translate(20, 560)">
+    <!-- 0 버튼 (더블 와이드) -->
+    <rect x="0" y="0" width="160" height="60" fill="#e9ecef" rx="12"/>
+    <text x="80" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">0</text>
+    
+    <!-- . 버튼 -->
+    <rect x="170" y="0" width="75" height="60" fill="#e9ecef" rx="12"/>
+    <text x="207.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="24" font-weight="400" fill="#000000" text-anchor="middle">.</text>
+    
+    <!-- = 버튼 -->
+    <rect x="255" y="0" width="75" height="60" fill="#ff9500" rx="12"/>
+    <text x="292.5" y="38" font-family="SF Pro Display, Arial, sans-serif" font-size="28" font-weight="300" fill="#ffffff" text-anchor="middle">=</text>
+  </g>
+  
+  <!-- 공학 함수 버튼 영역 -->
+  <!-- 첫 번째 공학 함수 행 (sin, cos, tan, π) -->
+  <g transform="translate(20, 640)">
+    <rect x="0" y="0" width="75" height="50" fill="#007aff" rx="12"/>
+    <text x="37.5" y="33" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" text-anchor="middle">sin</text>
+    
+    <rect x="85" y="0" width="75" height="50" fill="#007aff" rx="12"/>
+    <text x="122.5" y="33" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" text-anchor="middle">cos</text>
+    
+    <rect x="170" y="0" width="75" height="50" fill="#007aff" rx="12"/>
+    <text x="207.5" y="33" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" text-anchor="middle">tan</text>
+    
+    <rect x="255" y="0" width="75" height="50" fill="#af52de" rx="12"/>
+    <text x="292.5" y="33" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" text-anchor="middle">π</text>
+  </g>
+  
+  <!-- 두 번째 공학 함수 행 (ln, log, e, rad/deg) -->
+  <g transform="translate(20, 710)">
+    <rect x="0" y="0" width="75" height="50" fill="#007aff" rx="12"/>
+    <text x="37.5" y="33" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" text-anchor="middle">ln</text>
+    
+    <rect x="85" y="0" width="75" height="50" fill="#007aff" rx="12"/>
+    <text x="122.5" y="33" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" text-anchor="middle">log</text>
+    
+    <rect x="170" y="0" width="75" height="50" fill="#af52de" rx="12"/>
+    <text x="207.5" y="33" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="400" fill="#ffffff" text-anchor="middle">e</text>
+    
+    <rect x="255" y="0" width="75" height="50" fill="#6c757d" rx="12"/>
+    <text x="292.5" y="28" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff" text-anchor="middle">rad/</text>
+    <text x="292.5" y="40" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#ffffff" text-anchor="middle">deg</text>
+  </g>
+  
+  <!-- 하단 홈 인디케이터 -->
+  <rect x="165" y="790" width="45" height="4" fill="#000000" rx="2"/>
+</svg> 

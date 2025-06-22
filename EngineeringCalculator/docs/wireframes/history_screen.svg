@@ -1,0 +1,120 @@
+<svg width="375" height="812" viewBox="0 0 375 812" xmlns="http://www.w3.org/2000/svg">
+  <!-- iPhone 화면 배경 -->
+  <rect width="375" height="812" fill="#f8f9fa" stroke="#e9ecef" stroke-width="2"/>
+  
+  <!-- 상단 상태바 영역 -->
+  <rect x="0" y="0" width="375" height="44" fill="#ffffff"/>
+  <text x="20" y="28" font-family="SF Pro Display, Arial, sans-serif" font-size="14" font-weight="600" fill="#000000">9:41</text>
+  <text x="355" y="28" font-family="SF Pro Display, Arial, sans-serif" font-size="14" font-weight="600" fill="#000000" text-anchor="end">100%</text>
+  
+  <!-- 네비게이션 바 -->
+  <rect x="0" y="44" width="375" height="56" fill="#ffffff" stroke="#e9ecef" stroke-width="1"/>
+  
+  <!-- 뒤로가기 버튼 -->
+  <circle cx="40" cy="72" r="18" fill="#007aff"/>
+  <text x="40" y="77" font-family="SF Pro Display, Arial, sans-serif" font-size="14" font-weight="400" fill="#ffffff" text-anchor="middle">←</text>
+  
+  <!-- 제목 -->
+  <text x="187.5" y="77" font-family="SF Pro Display, Arial, sans-serif" font-size="18" font-weight="600" fill="#000000" text-anchor="middle">계산 히스토리</text>
+  
+  <!-- 전체 삭제 버튼 -->
+  <rect x="300" y="60" width="60" height="24" fill="#ff3b30" rx="12"/>
+  <text x="330" y="75" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="500" fill="#ffffff" text-anchor="middle">전체 삭제</text>
+  
+  <!-- 히스토리 목록 영역 -->
+  <rect x="0" y="100" width="375" height="650" fill="#ffffff"/>
+  
+  <!-- 히스토리 항목 1 -->
+  <g transform="translate(20, 120)">
+    <rect x="0" y="0" width="335" height="80" fill="#ffffff" stroke="#e9ecef" stroke-width="1" rx="12"/>
+    
+    <!-- 계산식 -->
+    <text x="20" y="30" font-family="SF Mono, Courier, monospace" font-size="16" fill="#000000">sin(30°)</text>
+    <text x="315" y="30" font-family="SF Mono, Courier, monospace" font-size="14" fill="#6c757d" text-anchor="end">2분 전</text>
+    
+    <!-- 결과 -->
+    <text x="20" y="55" font-family="SF Mono, Courier, monospace" font-size="20" font-weight="600" fill="#007aff">= 0.5000</text>
+    
+    <!-- 재사용 아이콘 -->
+    <circle cx="305" cy="50" r="12" fill="#e9ecef"/>
+    <text x="305" y="55" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#6c757d" text-anchor="middle">↗</text>
+  </g>
+  
+  <!-- 히스토리 항목 2 -->
+  <g transform="translate(20, 220)">
+    <rect x="0" y="0" width="335" height="80" fill="#ffffff" stroke="#e9ecef" stroke-width="1" rx="12"/>
+    
+    <text x="20" y="30" font-family="SF Mono, Courier, monospace" font-size="16" fill="#000000">2 + 3 × 4</text>
+    <text x="315" y="30" font-family="SF Mono, Courier, monospace" font-size="14" fill="#6c757d" text-anchor="end">5분 전</text>
+    
+    <text x="20" y="55" font-family="SF Mono, Courier, monospace" font-size="20" font-weight="600" fill="#007aff">= 14.0000</text>
+    
+    <circle cx="305" cy="50" r="12" fill="#e9ecef"/>
+    <text x="305" y="55" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#6c757d" text-anchor="middle">↗</text>
+  </g>
+  
+  <!-- 히스토리 항목 3 -->
+  <g transform="translate(20, 320)">
+    <rect x="0" y="0" width="335" height="80" fill="#ffffff" stroke="#e9ecef" stroke-width="1" rx="12"/>
+    
+    <text x="20" y="30" font-family="SF Mono, Courier, monospace" font-size="16" fill="#000000">ln(2.718)</text>
+    <text x="315" y="30" font-family="SF Mono, Courier, monospace" font-size="14" fill="#6c757d" text-anchor="end">10분 전</text>
+    
+    <text x="20" y="55" font-family="SF Mono, Courier, monospace" font-size="20" font-weight="600" fill="#007aff">= 1.0000</text>
+    
+    <circle cx="305" cy="50" r="12" fill="#e9ecef"/>
+    <text x="305" y="55" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#6c757d" text-anchor="middle">↗</text>
+  </g>
+  
+  <!-- 히스토리 항목 4 -->
+  <g transform="translate(20, 420)">
+    <rect x="0" y="0" width="335" height="80" fill="#ffffff" stroke="#e9ecef" stroke-width="1" rx="12"/>
+    
+    <text x="20" y="30" font-family="SF Mono, Courier, monospace" font-size="16" fill="#000000">√16</text>
+    <text x="315" y="30" font-family="SF Mono, Courier, monospace" font-size="14" fill="#6c757d" text-anchor="end">15분 전</text>
+    
+    <text x="20" y="55" font-family="SF Mono, Courier, monospace" font-size="20" font-weight="600" fill="#007aff">= 4.0000</text>
+    
+    <circle cx="305" cy="50" r="12" fill="#e9ecef"/>
+    <text x="305" y="55" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#6c757d" text-anchor="middle">↗</text>
+  </g>
+  
+  <!-- 히스토리 항목 5 -->
+  <g transform="translate(20, 520)">
+    <rect x="0" y="0" width="335" height="80" fill="#ffffff" stroke="#e9ecef" stroke-width="1" rx="12"/>
+    
+    <text x="20" y="30" font-family="SF Mono, Courier, monospace" font-size="16" fill="#000000">π × 2</text>
+    <text x="315" y="30" font-family="SF Mono, Courier, monospace" font-size="14" fill="#6c757d" text-anchor="end">20분 전</text>
+    
+    <text x="20" y="55" font-family="SF Mono, Courier, monospace" font-size="20" font-weight="600" fill="#007aff">= 6.2832</text>
+    
+    <circle cx="305" cy="50" r="12" fill="#e9ecef"/>
+    <text x="305" y="55" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#6c757d" text-anchor="middle">↗</text>
+  </g>
+  
+  <!-- 히스토리 항목 6 -->
+  <g transform="translate(20, 620)">
+    <rect x="0" y="0" width="335" height="80" fill="#ffffff" stroke="#e9ecef" stroke-width="1" rx="12"/>
+    
+    <text x="20" y="30" font-family="SF Mono, Courier, monospace" font-size="16" fill="#000000">cos(60°)</text>
+    <text x="315" y="30" font-family="SF Mono, Courier, monospace" font-size="14" fill="#6c757d" text-anchor="end">25분 전</text>
+    
+    <text x="20" y="55" font-family="SF Mono, Courier, monospace" font-size="20" font-weight="600" fill="#007aff">= 0.5000</text>
+    
+    <circle cx="305" cy="50" r="12" fill="#e9ecef"/>
+    <text x="305" y="55" font-family="SF Pro Display, Arial, sans-serif" font-size="12" font-weight="400" fill="#6c757d" text-anchor="middle">↗</text>
+  </g>
+  
+  <!-- 빈 상태 메시지 (히스토리가 없을 때 표시될 영역) -->
+  <!-- 
+  <g transform="translate(187.5, 400)" opacity="0">
+    <circle cx="0" cy="0" r="40" fill="#e9ecef"/>
+    <text x="0" y="-10" font-family="SF Pro Display, Arial, sans-serif" font-size="24" fill="#6c757d" text-anchor="middle">📊</text>
+    <text x="0" y="60" font-family="SF Pro Display, Arial, sans-serif" font-size="16" fill="#6c757d" text-anchor="middle">계산 히스토리가 없습니다</text>
+    <text x="0" y="80" font-family="SF Pro Display, Arial, sans-serif" font-size="14" fill="#adb5bd" text-anchor="middle">계산을 시작해보세요!</text>
+  </g>
+  -->
+  
+  <!-- 하단 홈 인디케이터 -->
+  <rect x="165" y="790" width="45" height="4" fill="#000000" rx="2"/>
+</svg> 

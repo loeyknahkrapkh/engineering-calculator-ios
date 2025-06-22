@@ -111,14 +111,14 @@
 
 ### 4.1 기본 UI 컴포넌트
 
--   [ ] `CalculatorButtonView` 구현
-    -   [ ] 버튼 스타일링 (Rounded Rectangle)
-    -   [ ] 색상 구분 (숫자, 연산자, 함수별)
-    -   [ ] 터치 피드백 구현
--   [ ] `DisplayView` 구현
-    -   [ ] 수식 표시 영역
-    -   [ ] 결과 표시 영역
-    -   [ ] 텍스트 크기 자동 조정
+-   [x] `CalculatorButtonView` 구현
+    -   [x] 버튼 스타일링 (Rounded Rectangle)
+    -   [x] 색상 구분 (숫자, 연산자, 함수별)
+    -   [x] 터치 피드백 구현
+-   [x] `DisplayView` 구현
+    -   [x] 수식 표시 영역
+    -   [x] 결과 표시 영역
+    -   [x] 텍스트 크기 자동 조정
 
 **🔄 Commit Point**: `feat: 기본 UI 컴포넌트 구현`
 

@@ -321,4 +321,108 @@ struct MathFunctionsTests {
         #expect(abs(negativeResult - 5.0) < 0.0001, "|-5| = 5이어야 합니다")
         #expect(abs(zeroResult - 0.0) < 0.0001, "|0| = 0이어야 합니다")
     }
+    
+    @Test("세제곱근 함수")
+    func cubeRoot() throws {
+        // Given
+        let positiveValue = 27.0
+        let negativeValue = -8.0
+        let zeroValue = 0.0
+        
+        // When
+        let positiveResult = try MathFunctions.cubeRoot(positiveValue)
+        let negativeResult = try MathFunctions.cubeRoot(negativeValue)
+        let zeroResult = try MathFunctions.cubeRoot(zeroValue)
+        
+        // Then
+        #expect(abs(positiveResult - 3.0) < 0.0001, "∛27 = 3이어야 합니다")
+        #expect(abs(negativeResult - (-2.0)) < 0.0001, "∛(-8) = -2이어야 합니다")
+        #expect(abs(zeroResult - 0.0) < 0.0001, "∛0 = 0이어야 합니다")
+    }
+    
+    // MARK: - Mathematical Constants Tests
+    
+    @Test("파이 상수")
+    func piConstant() {
+        // When
+        let piValue = MathFunctions.pi
+        
+        // Then
+        #expect(abs(piValue - Double.pi) < 0.0001, "π 값이 올바르지 않습니다")
+    }
+    
+    @Test("자연상수 e")
+    func eulerConstant() {
+        // When
+        let eValue = MathFunctions.e
+        
+        // Then
+        #expect(abs(eValue - exp(1.0)) < 0.0001, "e 값이 올바르지 않습니다")
+    }
+    
+    // MARK: - Edge Cases and Complex Tests
+    
+    @Test("삼각함수 특수각 테스트")
+    func trigonometricSpecialAngles() {
+        // sin(0°) = 0, cos(0°) = 1, tan(0°) = 0
+        #expect(abs(MathFunctions.sine(0, angleUnit: .degree) - 0.0) < 0.0001, "sin(0°) = 0이어야 합니다")
+        #expect(abs(MathFunctions.cosine(0, angleUnit: .degree) - 1.0) < 0.0001, "cos(0°) = 1이어야 합니다")
+        #expect(abs(MathFunctions.tangent(0, angleUnit: .degree) - 0.0) < 0.0001, "tan(0°) = 0이어야 합니다")
+        
+        // sin(90°) = 1, cos(90°) = 0
+        #expect(abs(MathFunctions.sine(90, angleUnit: .degree) - 1.0) < 0.0001, "sin(90°) = 1이어야 합니다")
+        #expect(abs(MathFunctions.cosine(90, angleUnit: .degree) - 0.0) < 0.0001, "cos(90°) = 0이어야 합니다")
+    }
+    
+    @Test("로그함수 특수값 테스트")
+    func logarithmSpecialValues() throws {
+        // ln(1) = 0
+        let lnOne = try MathFunctions.naturalLog(1.0)
+        #expect(abs(lnOne - 0.0) < 0.0001, "ln(1) = 0이어야 합니다")
+        
+        // log(1) = 0
+        let logOne = try MathFunctions.commonLog(1.0)
+        #expect(abs(logOne - 0.0) < 0.0001, "log(1) = 0이어야 합니다")
+        
+        // log₂(1) = 0
+        let log2One = try MathFunctions.binaryLog(1.0)
+        #expect(abs(log2One - 0.0) < 0.0001, "log₂(1) = 0이어야 합니다")
+    }
+    
+    @Test("지수함수 특수값 테스트")
+    func exponentialSpecialValues() throws {
+        // e⁰ = 1
+        let expZero = try MathFunctions.naturalExp(0.0)
+        #expect(abs(expZero - 1.0) < 0.0001, "e⁰ = 1이어야 합니다")
+        
+        // 10⁰ = 1
+        let powTenZero = try MathFunctions.powerOfTen(0.0)
+        #expect(abs(powTenZero - 1.0) < 0.0001, "10⁰ = 1이어야 합니다")
+    }
+    
+    @Test("역삼각함수 경계값 테스트")
+    func inverseTrigonometricBoundaryValues() throws {
+        // asin(-1) = -90°, asin(1) = 90°
+        let asinNegOne = try MathFunctions.arcsine(-1.0, angleUnit: .degree)
+        let asinOne = try MathFunctions.arcsine(1.0, angleUnit: .degree)
+        #expect(abs(asinNegOne - (-90.0)) < 0.0001, "asin(-1) = -90°이어야 합니다")
+        #expect(abs(asinOne - 90.0) < 0.0001, "asin(1) = 90°이어야 합니다")
+        
+        // acos(-1) = 180°, acos(1) = 0°
+        let acosNegOne = try MathFunctions.arccosine(-1.0, angleUnit: .degree)
+        let acosOne = try MathFunctions.arccosine(1.0, angleUnit: .degree)
+        #expect(abs(acosNegOne - 180.0) < 0.0001, "acos(-1) = 180°이어야 합니다")
+        #expect(abs(acosOne - 0.0) < 0.0001, "acos(1) = 0°이어야 합니다")
+    }
+    
+    @Test("큰 수 계산 테스트")
+    func largeNumberCalculations() throws {
+        // 큰 수의 거듭제곱
+        let largePower = try MathFunctions.power(10, 6)
+        #expect(abs(largePower - 1000000.0) < 0.0001, "10⁶ = 1,000,000이어야 합니다")
+        
+        // 작은 수의 제곱근
+        let smallSqrt = try MathFunctions.squareRoot(0.0001)
+        #expect(abs(smallSqrt - 0.01) < 0.0001, "√0.0001 = 0.01이어야 합니다")
+    }
 } 

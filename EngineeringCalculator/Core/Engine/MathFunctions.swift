@@ -4,6 +4,14 @@ import Foundation
 /// 공학용 계산기에서 사용하는 모든 수학 함수를 구현
 class MathFunctions {
     
+    // MARK: - Mathematical Constants
+    
+    /// 원주율 π
+    static let pi: Double = Double.pi
+    
+    /// 자연상수 e
+    static let e: Double = exp(1.0)
+    
     // MARK: - Basic Operations
     
     /// 덧셈

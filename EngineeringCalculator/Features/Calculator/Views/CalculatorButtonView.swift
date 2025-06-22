@@ -39,46 +39,17 @@ struct CalculatorButtonView: View {
     
     /// 버튼 폰트
     private var buttonFont: Font {
-        switch button.buttonType {
-        case .number, .operator:
-            return .system(size: 28, weight: .medium, design: .default)
-        case .function:
-            return .system(size: 16, weight: .medium, design: .default)
-        case .constant:
-            return .system(size: 24, weight: .medium, design: .default)
-        case .utility, .special:
-            return .system(size: 20, weight: .medium, design: .default)
-        }
+        return button.buttonType.font
     }
     
     /// 텍스트 색상
     private var textColor: Color {
-        switch button.buttonType {
-        case .number, .utility:
-            return .primary
-        case .operator:
-            return .white
-        case .function, .constant:
-            return .primary
-        case .special:
-            return .blue
-        }
+        return button.buttonType.textColor
     }
     
     /// 배경 색상
     private var backgroundColor: Color {
-        switch button.buttonType {
-        case .number:
-            return Color(.systemGray5)
-        case .operator:
-            return .orange
-        case .function, .constant:
-            return Color(.systemGray4)
-        case .utility:
-            return Color(.systemGray3)
-        case .special:
-            return Color(.systemBlue).opacity(0.1)
-        }
+        return button.buttonType.backgroundColor
     }
     
     /// 버튼 모서리 반지름

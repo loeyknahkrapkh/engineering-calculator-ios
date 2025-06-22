@@ -16,7 +16,7 @@ struct DisplayView: View {
                 Spacer()
                 Text(expression.isEmpty ? " " : expression)
                     .font(.system(size: expressionTextSize, weight: .regular, design: .monospaced))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppColors.Text.secondary)
                     .lineLimit(3)
                     .multilineTextAlignment(.trailing)
                     .background(
@@ -44,7 +44,7 @@ struct DisplayView: View {
                 Spacer()
                 Text(result.isEmpty ? "0" : result)
                     .font(.system(size: resultTextSize, weight: .light, design: .monospaced))
-                    .foregroundColor(hasError ? .red : .primary)
+                    .foregroundColor(hasError ? AppColors.Text.error : AppColors.Text.primary)
                     .lineLimit(2)
                     .multilineTextAlignment(.trailing)
                     .background(
@@ -69,9 +69,9 @@ struct DisplayView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(Color(.systemBackground))
+        .background(AppColors.surface)
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+        .shadow(color: AppColors.Shadow.light, radius: 2, x: 0, y: 1)
     }
     
     // MARK: - Private Methods

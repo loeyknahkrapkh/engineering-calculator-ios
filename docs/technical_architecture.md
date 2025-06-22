@@ -65,6 +65,83 @@ EngineeringCalculator/
     └── Localizable.strings
 ```
 
+### 1.4 모듈별 상세 구조
+
+#### 1.4.1 Core 모듈
+
+핵심 비즈니스 로직과 인프라 코드를 포함합니다.
+
+**Engine/** - 계산 엔진 및 수학 함수
+
+-   `CalculatorEngine.swift` - 계산 엔진 프로토콜
+-   `ScientificCalculatorEngine.swift` - 공학용 계산기 구현
+-   `ExpressionParser.swift` - 수식 파싱 로직
+-   `MathFunctions.swift` - 수학 함수 구현
+
+**Storage/** - 데이터 저장 및 관리
+
+-   `SettingsStorage.swift` - 설정 저장소 프로토콜
+-   `HistoryStorage.swift` - 히스토리 저장소 프로토콜
+-   `UserDefaultsSettingsStorage.swift` - UserDefaults 구현
+-   `CoreDataHistoryStorage.swift` - Core Data 구현
+
+#### 1.4.2 Features 모듈
+
+앱의 주요 기능별 모듈을 포함합니다.
+
+**Calculator/** - 메인 계산기 화면 및 기능
+**History/** - 계산 히스토리 관리 기능
+**Help/** - 도움말 및 사용법 안내 기능
+
+각 Feature는 다음과 같은 구조를 가집니다:
+
+-   `Views/` - SwiftUI 뷰 컴포넌트
+-   `ViewModels/` - MVVM 패턴의 ViewModel
+-   `Models/` - Feature별 데이터 모델
+
+#### 1.4.3 Shared 모듈
+
+앱 전체에서 공유되는 코드를 포함합니다.
+
+**Models/** - 공통 데이터 모델
+
+-   `CalculatorButton.swift` - 계산기 버튼 타입
+-   `CalculatorSettings.swift` - 앱 설정 모델
+-   `CalculationHistory.swift` - 계산 히스토리 모델
+-   `AngleUnit.swift` - 각도 단위 enum
+
+**Extensions/** - Swift 타입 확장
+
+-   `Double+Extensions.swift` - Double 타입 확장
+-   `String+Extensions.swift` - String 타입 확장
+
+**Constants/** - 앱 상수
+
+-   `AppConstants.swift` - 앱 전역 상수
+-   `MathConstants.swift` - 수학 상수 (π, e 등)
+
+#### 1.4.4 Resources 모듈
+
+앱의 리소스 파일들을 포함합니다.
+
+**Colors/** - 색상 시스템
+
+-   `Colors.swift` - 앱 전체 색상 정의
+-   버튼별 색상 구분 (숫자, 연산자, 함수, 상수)
+-   다크/라이트 모드 대응
+
+**Fonts/** - 폰트 시스템
+
+-   `Fonts.swift` - 앱 전체 폰트 정의
+-   SF Pro Display, SF Mono 폰트 설정
+
+**디자인 시스템 원칙:**
+
+-   iOS Human Interface Guidelines 준수
+-   44×44pt 최소 터치 타겟 크기
+-   Rounded Rectangle 버튼 스타일
+-   접근성 고려
+
 ## 2. 핵심 컴포넌트 설계
 
 ### 2.1 Calculator Engine

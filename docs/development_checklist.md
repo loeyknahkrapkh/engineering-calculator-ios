@@ -27,11 +27,11 @@
 
 ### 1.2 기본 모델 생성
 
--   [ ] `CalculatorButton` enum 구현
--   [ ] `CalculatorSettings` struct 구현
--   [ ] `CalculationHistory` struct 구현
--   [ ] `AngleUnit` enum 구현
--   [ ] 기본 상수 정의 (`AppConstants.swift`)
+-   [x] `CalculatorButton` enum 구현
+-   [x] `CalculatorSettings` struct 구현
+-   [x] `CalculationHistory` struct 구현
+-   [x] `AngleUnit` enum 구현
+-   [x] 기본 상수 정의 (`AppConstants.swift`)
 
 **🔄 Commit Point**: `feat: 기본 데이터 모델 및 상수 정의`
 

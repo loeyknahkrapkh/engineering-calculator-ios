@@ -86,7 +86,7 @@ enum CalculatorButton: String, CaseIterable {
 /// 버튼 타입 분류
 enum ButtonType {
     case number      // 숫자 버튼
-    case operator    // 연산자 버튼
+    case `operator`    // 연산자 버튼
     case function    // 함수 버튼
     case constant    // 상수 버튼
     case utility     // 유틸리티 버튼

@@ -41,10 +41,10 @@
 
 ### 2.1 계산 엔진 프로토콜 및 기본 구조
 
--   [ ] `CalculatorEngine` protocol 정의
--   [ ] `ExpressionParser` 클래스 기본 구조 생성
--   [ ] `MathFunctions` 클래스 기본 구조 생성
--   [ ] `ScientificCalculatorEngine` 클래스 기본 구조 생성
+-   [x] `CalculatorEngine` protocol 정의
+-   [x] `ExpressionParser` 클래스 기본 구조 생성
+-   [x] `MathFunctions` 클래스 기본 구조 생성
+-   [x] `ScientificCalculatorEngine` 클래스 기본 구조 생성
 
 **🔄 Commit Point**: `feat: 계산 엔진 기본 구조 및 프로토콜 정의`
 

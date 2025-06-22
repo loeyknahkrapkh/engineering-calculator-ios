@@ -693,39 +693,72 @@ struct CalculatorView: View {
 
 ## 4. 테스트 전략
 
+### 4.0 테스트 프레임워크
+
+-   **Swift Testing**: 주요 테스트 프레임워크로 사용 (`#expect`, `@Test`, `@Suite` 등)
+-   **XCTest**: UI 테스트에서만 병행 사용 (`XCUIApplication`, `XCUIElement` 등 UI 테스트 클래스)
+-   **Foundation**: 필요한 경우 import하여 사용
+-   **TDD (Test-Driven Development)**: 비즈니스 로직 구현 시 테스트 우선 작성
+
+**테스트 유형별 프레임워크 사용:**
+
+-   **Unit Tests**: Swift Testing 전용 (`#expect` 매크로 사용)
+-   **UI Tests**: Swift Testing + XCTest 혼합 (Swift Testing의 `#expect`와 XCTest의 UI 클래스 조합)
+-   **Integration Tests**: Swift Testing 전용
+
 ### 4.1 Unit Tests
 
 ```swift
-class CalculatorEngineTests: XCTestCase {
-    var sut: ScientificCalculatorEngine!
+import Testing
+import Foundation
+@testable import EngineeringCalculator
 
-    override func setUp() {
-        super.setUp()
-        sut = ScientificCalculatorEngine()
+@Suite("Calculator Engine Tests")
+struct CalculatorEngineTests {
+    let sut = ScientificCalculatorEngine()
+
+    @Test("Basic arithmetic operations")
+    func basicArithmetic() throws {
+        #expect(try sut.evaluate("2 + 3") == 5.0)
+        #expect(try sut.evaluate("10 - 4") == 6.0)
+        #expect(try sut.evaluate("3 × 4") == 12.0)
+        #expect(try sut.evaluate("15 ÷ 3") == 5.0)
     }
 
-    func testBasicArithmetic() {
-        XCTAssertEqual(try sut.evaluate("2 + 3"), 5.0)
-        XCTAssertEqual(try sut.evaluate("10 - 4"), 6.0)
-        XCTAssertEqual(try sut.evaluate("3 × 4"), 12.0)
-        XCTAssertEqual(try sut.evaluate("15 ÷ 3"), 5.0)
+    @Test("Trigonometric functions")
+    func trigonometricFunctions() throws {
+        let sinResult = try sut.evaluate("sin(30)")
+        #expect(abs(sinResult - 0.5) < 0.0001)
+
+        let cosResult = try sut.evaluate("cos(60)")
+        #expect(abs(cosResult - 0.5) < 0.0001)
+
+        let tanResult = try sut.evaluate("tan(45)")
+        #expect(abs(tanResult - 1.0) < 0.0001)
     }
 
-    func testTrigonometricFunctions() {
-        XCTAssertEqual(try sut.evaluate("sin(30)"), 0.5, accuracy: 0.0001)
-        XCTAssertEqual(try sut.evaluate("cos(60)"), 0.5, accuracy: 0.0001)
-        XCTAssertEqual(try sut.evaluate("tan(45)"), 1.0, accuracy: 0.0001)
+    @Test("Logarithmic functions")
+    func logarithmicFunctions() throws {
+        let lnResult = try sut.evaluate("ln(e)")
+        #expect(abs(lnResult - 1.0) < 0.0001)
+
+        let logResult = try sut.evaluate("log(100)")
+        #expect(abs(logResult - 2.0) < 0.0001)
     }
 
-    func testLogarithmicFunctions() {
-        XCTAssertEqual(try sut.evaluate("ln(e)"), 1.0, accuracy: 0.0001)
-        XCTAssertEqual(try sut.evaluate("log(100)"), 2.0, accuracy: 0.0001)
-    }
+    @Test("Error handling for invalid operations")
+    func errorHandling() {
+        #expect(throws: CalculatorError.self) {
+            try sut.evaluate("1 ÷ 0")
+        }
 
-    func testErrorHandling() {
-        XCTAssertThrowsError(try sut.evaluate("1 ÷ 0"))
-        XCTAssertThrowsError(try sut.evaluate("log(-1)"))
-        XCTAssertThrowsError(try sut.evaluate("asin(2)"))
+        #expect(throws: CalculatorError.self) {
+            try sut.evaluate("log(-1)")
+        }
+
+        #expect(throws: CalculatorError.self) {
+            try sut.evaluate("asin(2)")
+        }
     }
 }
 ```
@@ -733,25 +766,31 @@ class CalculatorEngineTests: XCTestCase {
 ### 4.2 UI Tests
 
 ```swift
-class CalculatorUITests: XCTestCase {
-    var app: XCUIApplication!
+import Testing
+import XCTest  // XCUIApplication과 UI 테스트 관련 클래스 사용을 위해 필요
+@testable import EngineeringCalculator
 
-    override func setUp() {
-        super.setUp()
-        app = XCUIApplication()
+@Suite("Calculator UI Tests")
+struct CalculatorUITests {
+
+    @Test("Basic calculation functionality")
+    func basicCalculation() async {
+        let app = XCUIApplication()
         app.launch()
-    }
 
-    func testBasicCalculation() {
         app.buttons["2"].tap()
         app.buttons["+"].tap()
         app.buttons["3"].tap()
         app.buttons["="].tap()
 
-        XCTAssertEqual(app.staticTexts["display"].label, "5")
+        #expect(app.staticTexts["display"].label == "5")
     }
 
-    func testHistoryFunctionality() {
+    @Test("History functionality")
+    func historyFunctionality() async {
+        let app = XCUIApplication()
+        app.launch()
+
         // 계산 수행
         app.buttons["2"].tap()
         app.buttons["+"].tap()
@@ -762,7 +801,133 @@ class CalculatorUITests: XCTestCase {
         app.buttons["hist"].tap()
 
         // 히스토리 항목 확인
-        XCTAssertTrue(app.staticTexts["2 + 3 = 5"].exists)
+        #expect(app.staticTexts["2 + 3 = 5"].exists)
+    }
+
+    @Test("Scientific functions")
+    func scientificFunctions() async {
+        let app = XCUIApplication()
+        app.launch()
+
+        // sin(30) 계산
+        app.buttons["sin"].tap()
+        app.buttons["("].tap()
+        app.buttons["3"].tap()
+        app.buttons["0"].tap()
+        app.buttons[")"].tap()
+        app.buttons["="].tap()
+
+        // 결과 확인 (0.5에 근사)
+        let displayText = app.staticTexts["display"].label
+        let result = Double(displayText) ?? 0
+                 #expect(abs(result - 0.5) < 0.01)
+     }
+}
+```
+
+### 4.3 Model Tests
+
+```swift
+import Testing
+import Foundation
+@testable import EngineeringCalculator
+
+@Suite("Calculator Models Tests")
+struct CalculatorModelsTests {
+
+    @Test("AngleUnit conversion")
+    func angleUnitConversion() {
+        #expect(AngleUnit.degree.displayName == "DEG")
+        #expect(AngleUnit.radian.displayName == "RAD")
+        #expect(AngleUnit.degree.rawValue == "deg")
+        #expect(AngleUnit.radian.rawValue == "rad")
+    }
+
+    @Test("CalculationHistory creation")
+    func calculationHistoryCreation() {
+        let history = CalculationHistory(expression: "2 + 3", result: 5.0)
+
+        #expect(history.expression == "2 + 3")
+        #expect(history.result == 5.0)
+        #expect(history.id != UUID()) // 고유한 ID 생성 확인
+        #expect(history.timestamp <= Date()) // 현재 시간 이전 생성 확인
+    }
+
+    @Test("CalculatorButton properties")
+    func calculatorButtonProperties() {
+        #expect(CalculatorButton.one.displayText == "1")
+        #expect(CalculatorButton.add.displayText == "+")
+        #expect(CalculatorButton.sin.displayText == "sin")
+
+        #expect(CalculatorButton.one.buttonType == .number)
+        #expect(CalculatorButton.add.buttonType == .operator)
+        #expect(CalculatorButton.sin.buttonType == .function)
+        #expect(CalculatorButton.pi.buttonType == .constant)
+    }
+
+    @Test("CalculatorSettings default values")
+    func calculatorSettingsDefaults() {
+        let settings = CalculatorSettings()
+
+        #expect(settings.angleUnit == .degree)
+        #expect(settings.decimalPlaces == 4)
+        #expect(settings.isFirstLaunch == true)
+        #expect(settings.showTips == true)
+    }
+}
+```
+
+### 4.4 ViewModel Tests
+
+```swift
+import Testing
+import Foundation
+@testable import EngineeringCalculator
+
+@Suite("Calculator ViewModel Tests")
+struct CalculatorViewModelTests {
+
+    @Test("Initial state")
+    func initialState() async {
+        let viewModel = await CalculatorViewModel()
+
+        await #expect(viewModel.displayText == "0")
+        await #expect(viewModel.currentExpression == "")
+        await #expect(viewModel.isNewNumber == true)
+    }
+
+    @Test("Number input handling")
+    func numberInputHandling() async {
+        let viewModel = await CalculatorViewModel()
+
+        await viewModel.buttonPressed(.one)
+        await #expect(viewModel.displayText == "1")
+        await #expect(viewModel.isNewNumber == false)
+
+        await viewModel.buttonPressed(.two)
+        await #expect(viewModel.displayText == "12")
+    }
+
+    @Test("Operator input handling")
+    func operatorInputHandling() async {
+        let viewModel = await CalculatorViewModel()
+
+        await viewModel.buttonPressed(.one)
+        await viewModel.buttonPressed(.add)
+
+        await #expect(viewModel.currentExpression.contains("+"))
+        await #expect(viewModel.isNewNumber == true)
+    }
+
+    @Test("Angle unit toggle")
+    func angleUnitToggle() async {
+        let viewModel = await CalculatorViewModel()
+
+        let initialUnit = await viewModel.settings.angleUnit
+        await viewModel.toggleAngleUnit()
+        let newUnit = await viewModel.settings.angleUnit
+
+        #expect(initialUnit != newUnit)
     }
 }
 ```

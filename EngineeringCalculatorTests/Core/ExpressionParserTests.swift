@@ -1,169 +1,224 @@
 import Testing
+import Foundation
 @testable import EngineeringCalculator
 
 /// 수식 파서의 기능을 테스트하는 구조체
+@Suite("Expression Parser Tests")
 struct ExpressionParserTests {
+    let parser = ExpressionParser()
+    
+    // MARK: - Tokenization Tests
+    
+    @Test("토큰화 - 기본 숫자")
+    func testTokenizeNumbers() throws {
+        let tokens = try parser.tokenize("123")
+        #expect(tokens == [.number(123)])
+    }
+    
+    @Test("토큰화 - 기본 숫자 - 소수점")
+    func testTokenizeDecimalNumbers() throws {
+        let tokensDecimal = try parser.tokenize("3.14")
+        #expect(tokensDecimal == [.number(3.14)])
+    }
+    
+    @Test("토큰화 - 기본 연산자")
+    func testTokenizeOperators() throws {
+        let tokens = try parser.tokenize("1+2")
+        #expect(tokens == [.number(1), .operator("+"), .number(2)])
+        
+        let tokensMultiple = try parser.tokenize("1+2*3")
+        #expect(tokensMultiple == [.number(1), .operator("+"), .number(2), .operator("*"), .number(3)])
+    }
+    
+    @Test("토큰화 - 괄호")
+    func testTokenizeParentheses() throws {
+        let tokens = try parser.tokenize("(1+2)")
+        #expect(tokens == [.leftParenthesis, .number(1), .operator("+"), .number(2), .rightParenthesis])
+    }
+    
+    @Test("토큰화 - 함수")
+    func testTokenizeFunctions() throws {
+        let tokens = try parser.tokenize("sin(30)")
+        #expect(tokens == [.function("sin"), .leftParenthesis, .number(30), .rightParenthesis])
+    }
+    
+    @Test("토큰화 - 상수")
+    func testTokenizeConstants() throws {
+        let tokens = try parser.tokenize("π+e")
+        #expect(tokens == [.constant("π"), .operator("+"), .constant("e")])
+    }
+    
+    @Test("토큰화 - 복잡한 수식")
+    func testTokenizeComplexExpression() throws {
+        let tokens = try parser.tokenize("sin(π/2)+log(10)")
+        let expected: [ExpressionParser.Token] = [
+            .function("sin"), .leftParenthesis, .constant("π"), .operator("/"), .number(2), .rightParenthesis,
+            .operator("+"),
+            .function("log"), .leftParenthesis, .number(10), .rightParenthesis
+        ]
+        #expect(tokens == expected)
+    }
+    
+    @Test("토큰화 - 공백 처리")
+    func testTokenizeWithSpaces() throws {
+        let tokens = try parser.tokenize("  1  +  2  ")
+        #expect(tokens == [.number(1), .operator("+"), .number(2)])
+    }
+    
+    @Test("토큰화 - 잘못된 수식")
+    func testTokenizeInvalidExpression() {
+        #expect(throws: CalculatorError.invalidExpression) {
+            try parser.tokenize("1++2")
+        }
+        
+        #expect(throws: CalculatorError.unknownFunction) {
+            try parser.tokenize("unknown(1)")
+        }
+    }
+    
+    // MARK: - Infix to Postfix Tests
+    
+    @Test("중위->후위 변환 - 기본 연산")
+    func testInfixToPostfixBasic() throws {
+        let tokens: [ExpressionParser.Token] = [.number(1), .operator("+"), .number(2)]
+        let postfix = try parser.infixToPostfix(tokens)
+        #expect(postfix == [.number(1), .number(2), .operator("+")])
+    }
+    
+    @Test("중위->후위 변환 - 연산자 우선순위")
+    func testInfixToPostfixPrecedence() throws {
+        let tokens: [ExpressionParser.Token] = [.number(1), .operator("+"), .number(2), .operator("*"), .number(3)]
+        let postfix = try parser.infixToPostfix(tokens)
+        #expect(postfix == [.number(1), .number(2), .number(3), .operator("*"), .operator("+")])
+    }
+    
+    @Test("중위->후위 변환 - 괄호")
+    func testInfixToPostfixParentheses() throws {
+        let tokens: [ExpressionParser.Token] = [
+            .leftParenthesis, .number(1), .operator("+"), .number(2), .rightParenthesis, .operator("*"), .number(3)
+        ]
+        let postfix = try parser.infixToPostfix(tokens)
+        #expect(postfix == [.number(1), .number(2), .operator("+"), .number(3), .operator("*")])
+    }
+    
+    @Test("중위->후위 변환 - 함수")
+    func testInfixToPostfixFunction() throws {
+        let tokens: [ExpressionParser.Token] = [
+            .function("sin"), .leftParenthesis, .number(30), .rightParenthesis
+        ]
+        let postfix = try parser.infixToPostfix(tokens)
+        #expect(postfix == [.number(30), .function("sin")])
+    }
+    
+    @Test("중위->후위 변환 - 거듭제곱 (우결합) - 간단한 케이스")
+    func testInfixToPostfixPowerSimple() throws {
+        let tokens: [ExpressionParser.Token] = [.number(2), .operator("^"), .number(3)]
+        let postfix = try parser.infixToPostfix(tokens)
+        #expect(postfix == [.number(2), .number(3), .operator("^")])
+    }
+    
+    @Test("중위->후위 변환 - 거듭제곱 (우결합) - 복잡한 케이스")
+    func testInfixToPostfixPowerRightAssociative() throws {
+        let tokens: [ExpressionParser.Token] = [.number(2), .operator("^"), .number(3), .operator("^"), .number(2)]
+        let postfix = try parser.infixToPostfix(tokens)
+        #expect(postfix == [.number(2), .number(3), .number(2), .operator("^"), .operator("^")])
+    }
+    
+    // MARK: - Postfix Evaluation Tests
+    
+    @Test("후위 계산 - 기본 연산")
+    func testEvaluatePostfixBasic() throws {
+        let tokens: [ExpressionParser.Token] = [.number(1), .number(2), .operator("+")]
+        let result = try parser.evaluatePostfix(tokens, angleUnit: .degree)
+        #expect(result == 3.0)
+    }
+    
+    @Test("후위 계산 - 복합 연산")
+    func testEvaluatePostfixComplex() throws {
+        let tokens: [ExpressionParser.Token] = [.number(1), .number(2), .number(3), .operator("*"), .operator("+")]
+        let result = try parser.evaluatePostfix(tokens, angleUnit: .degree)
+        #expect(result == 7.0)
+    }
+    
+    @Test("후위 계산 - 함수")
+    func testEvaluatePostfixFunction() throws {
+        let tokens: [ExpressionParser.Token] = [.number(90), .function("sin")]
+        let result = try parser.evaluatePostfix(tokens, angleUnit: .degree)
+        #expect(abs(result - 1.0) < 0.0001)
+    }
+    
+    @Test("후위 계산 - 상수")
+    func testEvaluatePostfixConstant() throws {
+        let tokens: [ExpressionParser.Token] = [.constant("π"), .number(2), .operator("/")]
+        let result = try parser.evaluatePostfix(tokens, angleUnit: .degree)
+        #expect(abs(result - Double.pi/2) < 0.0001)
+    }
+    
+    @Test("후위 계산 - 0으로 나누기 에러")
+    func testEvaluatePostfixDivisionByZero() {
+        let tokens: [ExpressionParser.Token] = [.number(1), .number(0), .operator("/")]
+        #expect(throws: CalculatorError.divisionByZero) {
+            try parser.evaluatePostfix(tokens, angleUnit: .degree)
+        }
+    }
     
     // MARK: - Parentheses Validation Tests
     
-    @Test("균형잡힌 괄호 검증", arguments: [
-        "(1+2)",
-        "((1+2)*3)",
-        "(1+(2*3))",
-        "sin(30)"
-    ])
-    func validateParenthesesWithBalancedParentheses(expression: String) {
-        // Given
-        let parser = ExpressionParser()
-        
-        // When
-        let isValid = parser.validateParentheses(expression)
-        
-        // Then
-        #expect(isValid, "균형잡힌 괄호는 유효해야 합니다: \(expression)")
+    @Test("괄호 검증 - 올바른 괄호")
+    func testValidateParenthesesValid() {
+        #expect(parser.validateParentheses("(1+2)"))
+        #expect(parser.validateParentheses("((1+2)*3)"))
+        #expect(parser.validateParentheses("sin(30)"))
+        #expect(parser.validateParentheses(""))
+        #expect(parser.validateParentheses("1+2"))
     }
     
-    @Test("불균형한 괄호 검증", arguments: [
-        "(1+2",
-        "1+2)",
-        "((1+2)",
-        "(1+2))",
-        ")1+2("
-    ])
-    func validateParenthesesWithUnbalancedParentheses(expression: String) {
-        // Given
-        let parser = ExpressionParser()
-        
-        // When
-        let isValid = parser.validateParentheses(expression)
-        
-        // Then
-        #expect(!isValid, "불균형한 괄호는 유효하지 않아야 합니다: \(expression)")
+    @Test("괄호 검증 - 잘못된 괄호")
+    func testValidateParenthesesInvalid() {
+        #expect(!parser.validateParentheses("(1+2"))
+        #expect(!parser.validateParentheses("1+2)"))
+        #expect(!parser.validateParentheses("((1+2)"))
+        #expect(!parser.validateParentheses("(1+2))"))
+        #expect(!parser.validateParentheses(")1+2("))
     }
     
-    @Test("괄호가 없는 수식 검증")
-    func validateParenthesesWithNoParentheses() {
-        // Given
-        let parser = ExpressionParser()
+    // MARK: - Integration Tests
+    
+    @Test("통합 테스트 - 간단한 수식")
+    func testFullParsingSimple() throws {
         let expression = "1+2*3"
-        
-        // When
-        let isValid = parser.validateParentheses(expression)
-        
-        // Then
-        #expect(isValid, "괄호가 없는 수식은 유효해야 합니다")
-    }
-    
-    @Test("빈 문자열 괄호 검증")
-    func validateParenthesesWithEmptyString() {
-        // Given
-        let parser = ExpressionParser()
-        let expression = ""
-        
-        // When
-        let isValid = parser.validateParentheses(expression)
-        
-        // Then
-        #expect(isValid, "빈 문자열은 괄호 검증에서 유효해야 합니다")
-    }
-    
-    // MARK: - Token Tests
-    
-    @Test("토큰 생성 확인")
-    func tokenCreation() {
-        // Given & When
-        let numberToken = ExpressionParser.Token.number(3.14)
-        let operatorToken = ExpressionParser.Token.operator("+")
-        let functionToken = ExpressionParser.Token.function("sin")
-        let leftParenToken = ExpressionParser.Token.leftParenthesis
-        let rightParenToken = ExpressionParser.Token.rightParenthesis
-        let constantToken = ExpressionParser.Token.constant("π")
-        
-        // Then - 토큰들이 정상적으로 생성되는지 확인
-        switch numberToken {
-        case .number(let value):
-            #expect(value == 3.14, "숫자 토큰의 값이 올바르지 않습니다")
-        default:
-            Issue.record("숫자 토큰이 생성되지 않았습니다")
-        }
-        
-        switch operatorToken {
-        case .`operator`(let op):
-            #expect(op == "+", "연산자 토큰의 값이 올바르지 않습니다")
-        default:
-            Issue.record("연산자 토큰이 생성되지 않았습니다")
-        }
-        
-        switch functionToken {
-        case .function(let functionName):
-            #expect(functionName == "sin", "함수 토큰의 값이 올바르지 않습니다")
-        default:
-            Issue.record("함수 토큰이 생성되지 않았습니다")
-        }
-        
-        switch leftParenToken {
-        case .leftParenthesis:
-            break // 성공
-        default:
-            Issue.record("왼쪽 괄호 토큰이 생성되지 않았습니다")
-        }
-        
-        switch rightParenToken {
-        case .rightParenthesis:
-            break // 성공
-        default:
-            Issue.record("오른쪽 괄호 토큰이 생성되지 않았습니다")
-        }
-        
-        switch constantToken {
-        case .constant(let const):
-            #expect(const == "π", "상수 토큰의 값이 올바르지 않습니다")
-        default:
-            Issue.record("상수 토큰이 생성되지 않았습니다")
-        }
-    }
-    
-    // MARK: - Future Test Placeholders
-    
-    // TODO: 실제 구현 후 활성화할 테스트들
-    
-    /*
-    @Test("간단한 수식 토큰화")
-    func tokenizeSimpleExpression() throws {
-        // Given
-        let parser = ExpressionParser()
-        
-        // When
-        let tokens = try parser.tokenize("1+2")
-        
-        // Then
-        #expect(tokens.count == 3)
-    }
-    
-    @Test("중위 표기법을 후위 표기법으로 변환")
-    func infixToPostfixConversion() throws {
-        // Given
-        let parser = ExpressionParser()
-        let tokens = [ExpressionParser.Token.number(1), ExpressionParser.Token.`operator`("+"), ExpressionParser.Token.number(2)]
-        
-        // When
+        let tokens = try parser.tokenize(expression)
         let postfix = try parser.infixToPostfix(tokens)
-        
-        // Then
-        #expect(postfix.count == 3)
+        let result = try parser.evaluatePostfix(postfix, angleUnit: .degree)
+        #expect(result == 7.0)
     }
     
-    @Test("후위 표기법 계산")
-    func evaluatePostfixExpression() throws {
-        // Given
-        let parser = ExpressionParser()
-        let tokens = [ExpressionParser.Token.number(1), ExpressionParser.Token.number(2), ExpressionParser.Token.`operator`("+")]
-        
-        // When
-        let result = try parser.evaluatePostfix(tokens, angleUnit: .degree)
-        
-        // Then
-        #expect(result == 3.0)
+    @Test("통합 테스트 - 괄호가 있는 수식")
+    func testFullParsingWithParentheses() throws {
+        let expression = "(1+2)*3"
+        let tokens = try parser.tokenize(expression)
+        let postfix = try parser.infixToPostfix(tokens)
+        let result = try parser.evaluatePostfix(postfix, angleUnit: .degree)
+        #expect(result == 9.0)
     }
-    */
+    
+    @Test("통합 테스트 - 삼각함수")
+    func testFullParsingTrigonometric() throws {
+        let expression = "sin(90)"
+        let tokens = try parser.tokenize(expression)
+        let postfix = try parser.infixToPostfix(tokens)
+        let result = try parser.evaluatePostfix(postfix, angleUnit: .degree)
+        #expect(abs(result - 1.0) < 0.0001)
+    }
+    
+    @Test("통합 테스트 - 복잡한 수식")
+    func testFullParsingComplex() throws {
+        let expression = "sin(π/2)+log(10)"
+        let tokens = try parser.tokenize(expression)
+        let postfix = try parser.infixToPostfix(tokens)
+        let result = try parser.evaluatePostfix(postfix, angleUnit: .radian)
+        // sin(π/2) = 1, log(10) = log₁₀(10) = 1 (상용로그)
+        let expectedResult = 1.0 + 1.0  // 2.0
+        #expect(abs(result - expectedResult) < 0.0001)
+    }
 } 

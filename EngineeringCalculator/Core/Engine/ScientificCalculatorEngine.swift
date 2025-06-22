@@ -69,8 +69,30 @@ class ScientificCalculatorEngine: CalculatorEngine {
     /// - Parameter expression: 검증할 수식 문자열
     /// - Returns: 유효성 여부
     func validateExpression(_ expression: String) -> Bool {
+        // 빈 문자열이나 공백만 있는 경우
+        let trimmed = expression.trimmingCharacters(in: .whitespaces)
+        if trimmed.isEmpty {
+            return false
+        }
+        
+        // 기본적인 유효성 검증
         do {
-            _ = try calculate(expression)
+            // 괄호 균형 검증
+            guard parser.validateParentheses(trimmed) else {
+                return false
+            }
+            
+            // 토큰화 시도
+            let tokens = try parser.tokenize(preprocessExpression(trimmed))
+            
+            // 토큰이 비어있으면 유효하지 않음
+            if tokens.isEmpty {
+                return false
+            }
+            
+            // 중위 표기법을 후위 표기법으로 변환 시도
+            _ = try parser.infixToPostfix(tokens)
+            
             return true
         } catch {
             return false

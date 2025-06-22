@@ -222,6 +222,19 @@ class MathFunctions {
         return abs(value)
     }
     
+    /// 세제곱근 함수
+    /// - Parameter value: 입력 값
+    /// - Returns: 세제곱근 값
+    /// - Throws: CalculatorError.domainError (복소수 결과인 경우)
+    static func cubeRoot(_ value: Double) throws -> Double {
+        // 음수의 세제곱근은 음수
+        if value < 0 {
+            return -pow(-value, 1.0/3.0)
+        } else {
+            return pow(value, 1.0/3.0)
+        }
+    }
+    
     // MARK: - Angle Conversion Helpers
     
     /// 각도를 라디안으로 변환

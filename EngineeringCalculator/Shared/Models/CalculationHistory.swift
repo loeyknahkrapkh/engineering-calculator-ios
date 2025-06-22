@@ -96,10 +96,21 @@ struct CalculationHistory: Identifiable, Codable, Equatable {
     
     /// 상대적 시간 문자열 (예: "2분 전", "1시간 전")
     var relativeTimeString: String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.localizedString(for: timestamp, relativeTo: Date())
+        let timeInterval = Date().timeIntervalSince(timestamp)
+        
+        // 간단한 상대 시간 계산 (formatter 사용 대신)
+        if timeInterval < 60 {
+            return "방금 전"
+        } else if timeInterval < 3600 {
+            let minutes = Int(timeInterval / 60)
+            return "\(minutes)분 전"
+        } else if timeInterval < 86400 {
+            let hours = Int(timeInterval / 3600)
+            return "\(hours)시간 전"
+        } else {
+            let days = Int(timeInterval / 86400)
+            return "\(days)일 전"
+        }
     }
     
     /// 절대 시간 문자열 (예: "2024-01-15 14:30")

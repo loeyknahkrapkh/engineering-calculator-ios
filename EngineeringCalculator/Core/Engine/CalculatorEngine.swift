@@ -2,7 +2,7 @@ import Foundation
 
 /// 계산 엔진의 핵심 프로토콜
 /// Protocol Oriented Programming을 적용하여 테스트 가능하고 확장 가능한 구조로 설계
-protocol CalculatorEngine {
+public protocol CalculatorEngine {
     /// 현재 각도 단위 설정
     var angleUnit: AngleUnit { get set }
     
@@ -24,7 +24,7 @@ protocol CalculatorEngine {
 }
 
 /// 계산 과정에서 발생할 수 있는 에러 타입
-enum CalculatorError: LocalizedError, Equatable {
+public enum CalculatorError: LocalizedError, Equatable {
     case invalidExpression
     case divisionByZero
     case domainError
@@ -34,7 +34,7 @@ enum CalculatorError: LocalizedError, Equatable {
     case missingOperand
     case invalidParentheses
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .invalidExpression:
             return "잘못된 수식입니다"

@@ -1,7 +1,7 @@
 import Foundation
 
 /// 계산기 설정 모델
-struct CalculatorSettings: Codable, Equatable {
+public struct CalculatorSettings: Codable, Equatable {
     /// 각도 단위 (라디안/도)
     var angleUnit: AngleUnit
     
@@ -24,7 +24,7 @@ struct CalculatorSettings: Codable, Equatable {
     var maxHistoryCount: Int
     
     /// 기본 설정으로 초기화
-    init() {
+    public init() {
         self.angleUnit = .degree
         self.decimalPlaces = 4
         self.isFirstLaunch = true
@@ -35,7 +35,7 @@ struct CalculatorSettings: Codable, Equatable {
     }
     
     /// 커스텀 설정으로 초기화
-    init(
+    public init(
         angleUnit: AngleUnit = .degree,
         decimalPlaces: Int = 4,
         isFirstLaunch: Bool = true,

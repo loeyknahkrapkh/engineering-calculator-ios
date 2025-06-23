@@ -1,7 +1,7 @@
 import Foundation
 
 /// Protocol defining the interface for calculation history storage operations
-protocol HistoryStorage {
+public protocol HistoryStorage {
     
     // MARK: - Save Operations
     

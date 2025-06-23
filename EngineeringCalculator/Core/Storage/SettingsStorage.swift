@@ -1,7 +1,7 @@
 import Foundation
 
 /// Protocol defining the interface for settings storage operations
-protocol SettingsStorage {
+public protocol SettingsStorage {
     
     // MARK: - Angle Unit Settings
     

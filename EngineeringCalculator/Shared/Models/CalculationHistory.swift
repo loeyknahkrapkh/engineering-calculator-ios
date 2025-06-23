@@ -1,9 +1,9 @@
 import Foundation
 
 /// 계산 히스토리 모델
-struct CalculationHistory: Identifiable, Codable, Equatable {
+public struct CalculationHistory: Identifiable, Codable, Equatable {
     /// 고유 식별자
-    let id: UUID
+    public let id: UUID
     
     /// 입력된 수식
     let expression: String
@@ -24,7 +24,7 @@ struct CalculationHistory: Identifiable, Codable, Equatable {
     let errorMessage: String?
     
     /// 기본 초기화 (성공적인 계산)
-    init(expression: String, result: Double, angleUnit: AngleUnit = .degree) {
+    public init(expression: String, result: Double, angleUnit: AngleUnit = .degree) {
         self.id = UUID()
         self.expression = expression.trimmingCharacters(in: .whitespacesAndNewlines)
         self.result = result

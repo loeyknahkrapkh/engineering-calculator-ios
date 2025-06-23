@@ -7,6 +7,7 @@ import SwiftUI
 struct DisplayViewTests {
     
     @Test("빈 표시 상태 확인")
+    @MainActor
     func testEmptyDisplayState() {
         let displayView = DisplayView(
             expression: "",
@@ -21,6 +22,7 @@ struct DisplayViewTests {
     }
     
     @Test("정상 계산 상태 확인")
+    @MainActor
     func testNormalCalculationState() {
         let displayView = DisplayView(
             expression: "2 + 3",
@@ -34,6 +36,7 @@ struct DisplayViewTests {
     }
     
     @Test("에러 상태 확인")
+    @MainActor
     func testErrorState() {
         let displayView = DisplayView(
             expression: "1 ÷ 0",
@@ -47,6 +50,7 @@ struct DisplayViewTests {
     }
     
     @Test("긴 수식 처리 확인")
+    @MainActor
     func testLongExpressionHandling() {
         let longExpression = "sin(30) + cos(45) × tan(60) + ln(10) / log(100) + sqrt(25)"
         let longResult = "12.345678901234567890"
@@ -63,6 +67,7 @@ struct DisplayViewTests {
     }
     
     @Test("다양한 수학 기호 표시 확인")
+    @MainActor
     func testMathematicalSymbolsDisplay() {
         let expression = "π × e + √2 ÷ ∛8"
         let result = "12.3456"

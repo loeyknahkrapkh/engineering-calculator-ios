@@ -1,7 +1,7 @@
 import Foundation
 
 /// 각도 단위를 나타내는 열거형
-enum AngleUnit: String, CaseIterable, Codable {
+public enum AngleUnit: String, CaseIterable, Codable {
     case radian = "rad"
     case degree = "deg"
     

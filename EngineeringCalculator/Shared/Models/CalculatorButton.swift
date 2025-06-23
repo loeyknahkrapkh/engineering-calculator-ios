@@ -1,7 +1,7 @@
 import Foundation
 
 /// 계산기 버튼 타입
-enum CalculatorButton: String, CaseIterable {
+public enum CalculatorButton: String, CaseIterable {
     // MARK: - 숫자
     case zero = "0", one = "1", two = "2", three = "3", four = "4"
     case five = "5", six = "6", seven = "7", eight = "8", nine = "9"
@@ -84,7 +84,7 @@ enum CalculatorButton: String, CaseIterable {
 }
 
 /// 버튼 타입 분류
-enum ButtonType {
+public enum ButtonType {
     case number      // 숫자 버튼
     case `operator`    // 연산자 버튼
     case function    // 함수 버튼

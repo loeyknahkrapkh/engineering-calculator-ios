@@ -13,6 +13,7 @@
 -   **언어**: Swift 6.0
 -   **UI Framework**: SwiftUI
 -   **최소 지원 버전**: iOS 18.4
+-   **화면 방향**: 세로 모드 전용 (Portrait Only)
 -   **데이터 저장**: UserDefaults (설정), Core Data (히스토리)
 -   **의존성 관리**: Swift Package Manager (SPM)
 

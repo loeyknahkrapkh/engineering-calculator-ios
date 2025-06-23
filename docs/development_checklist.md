@@ -154,10 +154,10 @@
 
 ### 5.2 History ViewModel
 
--   [ ] `HistoryViewModel` 클래스 구현
--   [ ] 히스토리 로드 기능
--   [ ] 히스토리 삭제 기능
--   [ ] 히스토리 항목 선택 기능
+-   [x] `HistoryViewModel` 클래스 구현
+-   [x] 히스토리 로드 기능
+-   [x] 히스토리 삭제 기능
+-   [x] 히스토리 항목 선택 기능
 
 **🔄 Commit Point**: `feat: History ViewModel 구현`
 

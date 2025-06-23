@@ -9,13 +9,14 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        CalculatorView(
+            viewModel: CalculatorViewModel(
+                calculatorEngine: ScientificCalculatorEngine(),
+                settingsStorage: UserDefaultsSettingsStorage(),
+                historyStorage: InMemoryHistoryStorage()
+            )
+        )
+        .preferredColorScheme(.light) // 기본 라이트 모드
     }
 }
 

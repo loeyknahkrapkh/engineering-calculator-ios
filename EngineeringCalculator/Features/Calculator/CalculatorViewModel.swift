@@ -310,17 +310,7 @@ public class CalculatorViewModel: ObservableObject {
         }
     }
     
-    /// 각도 단위 토글
-    private func toggleAngleUnit() {
-        settings.toggleAngleUnit()
-        
-        // 엔진에 설정 적용
-        var mutableEngine = calculatorEngine
-        mutableEngine.angleUnit = settings.angleUnit
-        
-        // 설정 저장
-        settingsStorage.saveSettings(settings)
-    }
+
     
     // MARK: - Private Calculation Methods
     
@@ -448,6 +438,29 @@ extension CalculatorViewModel {
     
     /// 현재 각도 단위 표시 텍스트
     var angleUnitDisplayText: String {
-        return settings.angleUnit == .degree ? "DEG" : "RAD"
+        return settings.angleUnit == .radian ? "rad" : "deg"
+    }
+    
+    /// 제곱 함수 처리 (x²)
+    func handleSquare() {
+        if !isNewNumber && currentNumber != "0" {
+            let squareExpression = "(\(currentNumber))^2"
+            currentExpression += squareExpression
+            isNewNumber = true
+            currentNumber = "0"
+            displayText = "(\(currentNumber))²"
+        }
+    }
+    
+    /// 각도 단위 토글 (public method)
+    func toggleAngleUnit() {
+        settings.toggleAngleUnit()
+        
+        // 엔진에 설정 적용
+        var mutableEngine = calculatorEngine
+        mutableEngine.angleUnit = settings.angleUnit
+        
+        // 설정 저장
+        settingsStorage.saveSettings(settings)
     }
 } 

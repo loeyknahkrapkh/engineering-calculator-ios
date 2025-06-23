@@ -138,17 +138,17 @@
 
 ### 5.1 Calculator ViewModel
 
--   [ ] `CalculatorViewModel` 클래스 기본 구조
--   [ ] `@Published` 속성들 정의
-    -   [ ] `displayText`
-    -   [ ] `currentExpression`
-    -   [ ] `isNewNumber`
-    -   [ ] `settings`
--   [ ] 버튼 입력 처리 로직
--   [ ] 숫자 입력 처리
--   [ ] 연산자 입력 처리
--   [ ] 함수 입력 처리
--   [ ] 계산 실행 및 결과 처리
+-   [x] `CalculatorViewModel` 클래스 기본 구조
+-   [x] `@Published` 속성들 정의
+    -   [x] `displayText`
+    -   [x] `currentExpression`
+    -   [x] `isNewNumber`
+    -   [x] `settings`
+-   [x] 버튼 입력 처리 로직
+-   [x] 숫자 입력 처리
+-   [x] 연산자 입력 처리
+-   [x] 함수 입력 처리
+-   [x] 계산 실행 및 결과 처리
 
 **🔄 Commit Point**: `feat: Calculator ViewModel 기본 기능 구현`
 

@@ -163,9 +163,9 @@
 
 ### 5.3 Help ViewModel
 
--   [ ] `HelpViewModel` 클래스 구현
--   [ ] 함수 설명 데이터 관리
--   [ ] 팁 데이터 관리
+-   [x] `HelpViewModel` 클래스 구현
+-   [x] 함수 설명 데이터 관리
+-   [x] 팁 데이터 관리
 
 **🔄 Commit Point**: `feat: Help ViewModel 구현`
 

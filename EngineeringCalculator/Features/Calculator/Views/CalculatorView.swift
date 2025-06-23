@@ -13,17 +13,21 @@ struct CalculatorView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
+                // 상단 여백
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 20)
+                
                 // 디스플레이 영역
                 displaySection
-                    .frame(height: geometry.size.height * 0.3)
+                    .padding(.horizontal, 20) // 디스플레이와 버튼 영역 동일한 패딩
                 
                 // 버튼 영역
                 buttonSection(geometry: geometry)
-                    .frame(height: geometry.size.height * 0.7)
+                    .padding(.horizontal, 20) // 디스플레이와 버튼 영역 동일한 패딩
             }
         }
         .background(AppColors.background)
-        .ignoresSafeArea(.all, edges: .bottom)
         .sheet(isPresented: $showHistory) {
             // TODO: HistoryView 구현 후 연결
             Text("History View")
@@ -45,56 +49,60 @@ struct CalculatorView: View {
                 result: viewModel.displayText,
                 hasError: viewModel.hasError
             )
-            .padding(.horizontal, 20)
             .padding(.bottom, 20)
         }
+        .frame(height: 200)
     }
     
     // MARK: - Button Section
     
     private func buttonSection(geometry: GeometryProxy) -> some View {
-        VStack(spacing: 12) {
-            // 유틸리티 버튼 행 ((, ), hist, help)
-            utilityButtonRow(geometry: geometry)
+        VStack(spacing: 0) {
+            VStack(spacing: buttonSpacing(geometry)) {
+                // 유틸리티 버튼 행 ((, ), hist, help)
+                utilityButtonRow(geometry)
+                
+                // 추가 공학 함수 버튼 행 (ln, log, e, rad/deg)
+                advancedFunctionButtonRow(geometry)
+                
+                // 기본 공학 함수 버튼 행 (sin, cos, tan, π)
+                basicFunctionButtonRow(geometry)
+                
+                // 기능 버튼 행 (C, ±, %, ÷)
+                functionButtonRow(geometry)
+                
+                // 숫자 및 연산자 버튼 그리드
+                numberAndOperatorGrid(geometry)
+            }
+            .padding(.top, 20)
             
-            // 추가 공학 함수 버튼 행 (ln, log, e, rad/deg)
-            advancedFunctionButtonRow(geometry: geometry)
-            
-            // 기본 공학 함수 버튼 행 (sin, cos, tan, π)
-            basicFunctionButtonRow(geometry: geometry)
-            
-            // 기능 버튼 행 (C, ±, %, ÷)
-            functionButtonRow(geometry: geometry)
-            
-            // 숫자 및 연산자 버튼 그리드
-            numberAndOperatorGrid(geometry: geometry)
+            Spacer(minLength: 0) // 남은 공간 차지
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 20)
+        .padding(.bottom, geometry.safeAreaInsets.bottom + 10)
     }
     
     // MARK: - Button Rows
     
     /// 유틸리티 버튼 행 ((, ), hist, help)
-    private func utilityButtonRow(geometry: GeometryProxy) -> some View {
-        HStack(spacing: buttonSpacing(for: geometry)) {
-            calculatorButton(.openParenthesis, geometry: geometry)
-            calculatorButton(.closeParenthesis, geometry: geometry)
-            calculatorButton(.history, geometry: geometry) {
+    private func utilityButtonRow(_ geometry: GeometryProxy) -> some View {
+        HStack(spacing: buttonSpacing(geometry)) {
+            calculatorButton(.openParenthesis, geometry)
+            calculatorButton(.closeParenthesis, geometry)
+            calculatorButton(.history, geometry) {
                 showHistory = true
             }
-            calculatorButton(.help, geometry: geometry) {
+            calculatorButton(.help, geometry) {
                 showHelp = true
             }
         }
     }
     
     /// 추가 공학 함수 버튼 행 (ln, log, e, rad/deg)
-    private func advancedFunctionButtonRow(geometry: GeometryProxy) -> some View {
-        HStack(spacing: buttonSpacing(for: geometry)) {
-            calculatorButton(.ln, geometry: geometry)
-            calculatorButton(.log, geometry: geometry)
-            calculatorButton(.e, geometry: geometry)
+    private func advancedFunctionButtonRow(_ geometry: GeometryProxy) -> some View {
+        HStack(spacing: buttonSpacing(geometry)) {
+            calculatorButton(.ln, geometry)
+            calculatorButton(.log, geometry)
+            calculatorButton(.e, geometry)
             
             // 각도 단위 버튼 (동적 텍스트)
             Button {
@@ -107,66 +115,63 @@ struct CalculatorView: View {
                     .background(ButtonType.special.backgroundColor)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-            .frame(
-                width: buttonSize(for: geometry),
-                height: buttonSize(for: geometry)
-            )
+            .frame(width: buttonWidth(geometry), height: buttonHeight(geometry))
         }
     }
     
     /// 기본 공학 함수 버튼 행 (sin, cos, tan, π)
-    private func basicFunctionButtonRow(geometry: GeometryProxy) -> some View {
-        HStack(spacing: buttonSpacing(for: geometry)) {
-            calculatorButton(.sin, geometry: geometry)
-            calculatorButton(.cos, geometry: geometry)
-            calculatorButton(.tan, geometry: geometry)
-            calculatorButton(.pi, geometry: geometry)
+    private func basicFunctionButtonRow(_ geometry: GeometryProxy) -> some View {
+        HStack(spacing: buttonSpacing(geometry)) {
+            calculatorButton(.sin, geometry)
+            calculatorButton(.cos, geometry)
+            calculatorButton(.tan, geometry)
+            calculatorButton(.pi, geometry)
         }
     }
     
     /// 기능 버튼 행 (C, ±, %, ÷)
-    private func functionButtonRow(geometry: GeometryProxy) -> some View {
-        HStack(spacing: buttonSpacing(for: geometry)) {
-            calculatorButton(.clear, geometry: geometry)
-            calculatorButton(.plusMinus, geometry: geometry)
-            calculatorButton(.percent, geometry: geometry)
-            calculatorButton(.divide, geometry: geometry)
+    private func functionButtonRow(_ geometry: GeometryProxy) -> some View {
+        HStack(spacing: buttonSpacing(geometry)) {
+            calculatorButton(.clear, geometry)
+            calculatorButton(.plusMinus, geometry)
+            calculatorButton(.percent, geometry)
+            calculatorButton(.divide, geometry)
         }
     }
     
     /// 숫자 및 연산자 버튼 그리드
-    private func numberAndOperatorGrid(geometry: GeometryProxy) -> some View {
-        VStack(spacing: 12) {
+    private func numberAndOperatorGrid(_ geometry: GeometryProxy) -> some View {
+        VStack(spacing: buttonSpacing(geometry)) {
             // 7, 8, 9, ×
-            HStack(spacing: buttonSpacing(for: geometry)) {
-                calculatorButton(.seven, geometry: geometry)
-                calculatorButton(.eight, geometry: geometry)
-                calculatorButton(.nine, geometry: geometry)
-                calculatorButton(.multiply, geometry: geometry)
+            HStack(spacing: buttonSpacing(geometry)) {
+                calculatorButton(.seven, geometry)
+                calculatorButton(.eight, geometry)
+                calculatorButton(.nine, geometry)
+                calculatorButton(.multiply, geometry)
             }
             
             // 4, 5, 6, -
-            HStack(spacing: buttonSpacing(for: geometry)) {
-                calculatorButton(.four, geometry: geometry)
-                calculatorButton(.five, geometry: geometry)
-                calculatorButton(.six, geometry: geometry)
-                calculatorButton(.subtract, geometry: geometry)
+            HStack(spacing: buttonSpacing(geometry)) {
+                calculatorButton(.four, geometry)
+                calculatorButton(.five, geometry)
+                calculatorButton(.six, geometry)
+                calculatorButton(.subtract, geometry)
             }
             
             // 1, 2, 3, +
-            HStack(spacing: buttonSpacing(for: geometry)) {
-                calculatorButton(.one, geometry: geometry)
-                calculatorButton(.two, geometry: geometry)
-                calculatorButton(.three, geometry: geometry)
-                calculatorButton(.add, geometry: geometry)
+            HStack(spacing: buttonSpacing(geometry)) {
+                calculatorButton(.one, geometry)
+                calculatorButton(.two, geometry)
+                calculatorButton(.three, geometry)
+                calculatorButton(.add, geometry)
             }
             
             // 0, ., =
-            HStack(spacing: buttonSpacing(for: geometry)) {
-                calculatorButton(.zero, geometry: geometry)
-                    .frame(width: buttonSize(for: geometry) * 2 + buttonSpacing(for: geometry))
-                calculatorButton(.decimal, geometry: geometry)
-                calculatorButton(.equals, geometry: geometry)
+            HStack(spacing: buttonSpacing(geometry)) {
+                calculatorButton(.zero, geometry)
+                    .frame(width: buttonWidth(geometry) * 2 + buttonSpacing(geometry))
+                calculatorButton(.decimal, geometry)
+                calculatorButton(.equals, geometry)
             }
         }
     }
@@ -174,7 +179,7 @@ struct CalculatorView: View {
     // MARK: - Helper Methods
     
     /// 계산기 버튼 생성
-    private func calculatorButton(_ button: CalculatorButton, geometry: GeometryProxy, customAction: (() -> Void)? = nil) -> some View {
+    private func calculatorButton(_ button: CalculatorButton, _ geometry: GeometryProxy, customAction: (() -> Void)? = nil) -> some View {
         CalculatorButtonView(button: button) {
             if let customAction = customAction {
                 customAction()
@@ -182,29 +187,48 @@ struct CalculatorView: View {
                 viewModel.handleButtonPress(button)
             }
         }
-        .frame(
-            width: buttonSize(for: geometry),
-            height: buttonSize(for: geometry)
-        )
+        .frame(width: buttonWidth(geometry), height: buttonHeight(geometry))
         .contextMenu {
             // 길게 누르기 시 확장 기능 메뉴
             contextMenuItems(for: button)
         }
     }
     
-    /// 버튼 크기 계산 (반응형)
-    private func buttonSize(for geometry: GeometryProxy) -> CGFloat {
-        let screenWidth = geometry.size.width
-        let padding: CGFloat = 40 // 좌우 패딩
-        let spacing: CGFloat = buttonSpacing(for: geometry)
-        let availableWidth = screenWidth - padding - (spacing * 3) // 4개 버튼 간 3개 간격
-        return availableWidth / 4
+    /// 버튼 높이 계산 (화면 크기에 따른 동적 계산)
+    private func buttonHeight(_ geometry: GeometryProxy) -> CGFloat {
+        // 사용 가능한 높이 계산
+        let displayHeight: CGFloat = 200
+        let topMargin: CGFloat = 20
+        let bottomMargin = geometry.safeAreaInsets.bottom + 10
+        let verticalPadding: CGFloat = 40 // 버튼 영역 상하 패딩
+        let availableHeight = geometry.size.height - displayHeight - topMargin - bottomMargin - verticalPadding
+        
+        let numberOfRows: CGFloat = 8 // 총 8행
+        let totalSpacing = buttonSpacing(geometry) * (numberOfRows - 1)
+        let buttonHeight = (availableHeight - totalSpacing) / numberOfRows
+        
+        // 최소/최대 높이 보장
+        return max(50, min(buttonHeight, 80))
+    }
+    
+    /// 버튼 가로 크기 계산 (사용 가능한 가로 공간을 4등분)
+    private func buttonWidth(_ geometry: GeometryProxy) -> CGFloat {
+        // 사용 가능한 가로 크기 계산 (외부 패딩 40pt 제외)
+        let contentWidth = geometry.size.width - 40 // 20pt씩 좌우 패딩
+        let totalSpacingWidth = buttonSpacing(geometry) * 3 // 4개 버튼 간 3개 간격
+        return (contentWidth - totalSpacingWidth) / 4
     }
     
     /// 버튼 간격 계산
-    private func buttonSpacing(for geometry: GeometryProxy) -> CGFloat {
+    private func buttonSpacing(_ geometry: GeometryProxy) -> CGFloat {
         let screenWidth = geometry.size.width
-        return screenWidth > 400 ? 16 : 12
+        if screenWidth > 428 { // iPhone Pro Max
+            return 14
+        } else if screenWidth > 390 { // iPhone Pro
+            return 12
+        } else {
+            return 10
+        }
     }
     
     /// 컨텍스트 메뉴 아이템들 (확장 기능)

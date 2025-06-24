@@ -256,4 +256,78 @@ struct HistoryViewTests {
             #expect(!viewModel.hasError) // 현재는 InMemoryHistoryStorage가 에러를 발생시키지 않음
         }
     }
+    
+    // MARK: - 히스토리 재사용 기능 테스트
+    
+    @Test("히스토리 항목 재사용 기능")
+    func testHistoryItemReuse() async throws {
+        // Given
+        let storage = createMockHistoryStorage()
+        let viewModel = HistoryViewModel(historyStorage: storage)
+        await viewModel.loadHistory()
+        
+        let firstHistory = await MainActor.run { viewModel.historyItems.first! }
+        
+        // When
+        await MainActor.run {
+            viewModel.selectHistory(firstHistory)
+        }
+        
+        // Then
+        await MainActor.run {
+            #expect(viewModel.selectedHistory != nil)
+            #expect(viewModel.selectedExpression == firstHistory.expression)
+        }
+    }
+    
+    @Test("선택된 히스토리가 올바른 수식을 반환하는지 확인")
+    func testSelectedHistoryReturnsCorrectExpression() async throws {
+        // Given
+        let expectedExpression = "2 + 3 * 4"
+        let history = CalculationHistory(expression: expectedExpression, result: 14.0)
+        let storage = InMemoryHistoryStorage()
+        try? storage.saveHistory(history)
+        
+        let viewModel = HistoryViewModel(historyStorage: storage)
+        await viewModel.loadHistory()
+        
+        // When
+        await MainActor.run {
+            viewModel.selectHistory(history)
+        }
+        
+        let selectedExpression = await MainActor.run {
+            viewModel.selectedExpression
+        }
+        
+        // Then
+        #expect(selectedExpression == expectedExpression)
+    }
+    
+    @Test("계산기로 수식 전달 후 선택 해제")
+    func testExpressionTransferAndDeselection() async throws {
+        // Given
+        let expression = "sin(π/2) + cos(0)"
+        let history = CalculationHistory(expression: expression, result: 2.0)
+        let storage = InMemoryHistoryStorage()
+        try? storage.saveHistory(history)
+        
+        let viewModel = HistoryViewModel(historyStorage: storage)
+        await viewModel.loadHistory()
+        
+        await MainActor.run {
+            viewModel.selectHistory(history)
+        }
+        
+        // When
+        let transferredExpression = await MainActor.run {
+            viewModel.getSelectedExpressionAndDeselect()
+        }
+        
+        // Then
+        #expect(transferredExpression == expression)
+        await MainActor.run {
+            #expect(viewModel.selectedHistory == nil)
+        }
+    }
 } 

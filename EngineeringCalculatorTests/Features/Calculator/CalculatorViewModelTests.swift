@@ -365,4 +365,81 @@ struct CalculatorViewModelTests {
         viewModel.handleButtonPress(.angleUnit)
         #expect(viewModel.settings.angleUnit == .degree)
     }
+    
+    // MARK: - 히스토리 재사용 테스트
+    
+    @Test("히스토리에서 수식 불러오기")
+    @MainActor
+    func testLoadExpressionFromHistory() {
+        let viewModel = CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        let expression = "2 + 3 * 4"
+        
+        viewModel.loadExpressionFromHistory(expression)
+        
+        #expect(viewModel.currentExpression == expression)
+        #expect(viewModel.displayText == expression)
+        #expect(!viewModel.isNewNumber)
+    }
+    
+    @Test("히스토리에서 복잡한 수식 불러오기")
+    @MainActor
+    func testLoadComplexExpressionFromHistory() {
+        let viewModel = CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        let complexExpression = "sin(π/2) + cos(0) * log(10)"
+        
+        viewModel.loadExpressionFromHistory(complexExpression)
+        
+        #expect(viewModel.currentExpression == complexExpression)
+        #expect(viewModel.displayText == complexExpression)
+        #expect(!viewModel.isNewNumber)
+    }
+    
+    @Test("빈 수식 불러오기 처리")
+    @MainActor
+    func testLoadEmptyExpressionFromHistory() {
+        let viewModel = CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        let emptyExpression = ""
+        
+        viewModel.loadExpressionFromHistory(emptyExpression)
+        
+        #expect(viewModel.currentExpression == "")
+        #expect(viewModel.displayText == "0")
+        #expect(viewModel.isNewNumber)
+    }
+    
+    @Test("히스토리 수식 불러온 후 계산 실행")
+    @MainActor
+    func testCalculateAfterLoadingHistoryExpression() {
+        let mockEngine = MockCalculatorEngine()
+        mockEngine.calculationResult = 8.0
+        
+        let viewModel = CalculatorViewModel(
+            calculatorEngine: mockEngine,
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        let expression = "5 + 3"
+        
+        viewModel.loadExpressionFromHistory(expression)
+        viewModel.handleButtonPress(.equals)
+        
+        #expect(viewModel.displayText == "8")
+        #expect(!viewModel.hasError)
+    }
 } 

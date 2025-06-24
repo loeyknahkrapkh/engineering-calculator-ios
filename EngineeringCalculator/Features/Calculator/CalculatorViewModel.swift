@@ -431,6 +431,27 @@ extension CalculatorViewModel {
         clearError()
     }
     
+    /// 히스토리에서 수식을 불러와서 현재 계산기에 설정
+    /// - Parameter expression: 불러올 수식
+    public func loadExpressionFromHistory(_ expression: String) {
+        clearError()
+        
+        if expression.isEmpty {
+            currentExpression = ""
+            displayText = "0"
+            currentNumber = "0"
+            isNewNumber = true
+        } else {
+            currentExpression = expression
+            displayText = expression
+            currentNumber = "0"
+            isNewNumber = false
+        }
+        
+        // 괄호 카운터 초기화
+        openParenthesesCount = 0
+    }
+    
     /// 현재 상태가 계산 가능한지 확인
     var canCalculate: Bool {
         return !currentExpression.isEmpty || (!isNewNumber && currentNumber != "0")
@@ -462,5 +483,10 @@ extension CalculatorViewModel {
         
         // 설정 저장
         settingsStorage.saveSettings(settings)
+    }
+    
+    /// 히스토리 저장소에 대한 읽기 전용 접근자
+    func getHistoryStorage() -> HistoryStorage {
+        return historyStorage
     }
 } 

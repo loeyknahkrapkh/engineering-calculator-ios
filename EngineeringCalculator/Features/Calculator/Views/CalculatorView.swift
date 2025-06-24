@@ -29,8 +29,14 @@ struct CalculatorView: View {
         }
         .background(AppColors.background)
         .sheet(isPresented: $showHistory) {
-            // TODO: HistoryView 구현 후 연결
-            Text("History View")
+            let historyViewModel = HistoryViewModel(historyStorage: viewModel.getHistoryStorage())
+            HistoryView(
+                viewModel: historyViewModel,
+                onHistorySelected: { expression in
+                    viewModel.loadExpressionFromHistory(expression)
+                    showHistory = false
+                }
+            )
         }
         .sheet(isPresented: $showHelp) {
             // TODO: HelpView 구현 후 연결

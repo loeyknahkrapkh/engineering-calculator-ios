@@ -7,6 +7,9 @@ struct HistoryView: View {
     @ObservedObject var viewModel: HistoryViewModel
     @Environment(\.dismiss) private var dismiss
     
+    /// 히스토리 항목이 선택되었을 때 호출되는 클로저
+    var onHistorySelected: ((String) -> Void)?
+    
     // MARK: - State
     
     @State private var showingClearAlert = false
@@ -110,8 +113,11 @@ struct HistoryView: View {
                 ForEach(viewModel.historyItems) { history in
                     HistoryRowView(history: history)
                         .onTapGesture {
-                            // 히스토리 항목 선택 (나중에 계산기로 전달)
+                            // 히스토리 항목 선택하여 계산기로 전달
                             viewModel.selectHistory(history)
+                            if let expression = viewModel.getSelectedExpressionAndDeselect() {
+                                onHistorySelected?(expression)
+                            }
                             dismiss()
                         }
                         .swipeActions(edge: .trailing) {
@@ -134,7 +140,10 @@ struct HistoryView: View {
 
 #Preview("비어있는 히스토리") {
     HistoryView(
-        viewModel: HistoryViewModel(historyStorage: InMemoryHistoryStorage())
+        viewModel: HistoryViewModel(historyStorage: InMemoryHistoryStorage()),
+        onHistorySelected: { expression in
+            print("Selected expression: \(expression)")
+        }
     )
 }
 
@@ -156,15 +165,25 @@ struct HistoryView: View {
     
     let viewModel = HistoryViewModel(historyStorage: storage)
     
-    return HistoryView(viewModel: viewModel)
-        .task {
-            await viewModel.loadHistory()
+    return HistoryView(
+        viewModel: viewModel,
+        onHistorySelected: { expression in
+            print("Selected expression: \(expression)")
         }
+    )
+    .task {
+        await viewModel.loadHistory()
+    }
 }
 
 #Preview("로딩 상태") {
     let viewModel = HistoryViewModel(historyStorage: InMemoryHistoryStorage())
     viewModel.isLoading = true
     
-    return HistoryView(viewModel: viewModel)
+    return HistoryView(
+        viewModel: viewModel,
+        onHistorySelected: { expression in
+            print("Selected expression: \(expression)")
+        }
+    )
 } 

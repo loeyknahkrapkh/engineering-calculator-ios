@@ -44,6 +44,10 @@ struct HelpViewModelTests {
             return tips.first { $0.isDaily }
         }
         
+        func clearCache() {
+            // Mock implementation - no-op for testing
+        }
+        
         // Helper methods for testing
         func setTestFunctions(_ functions: [FunctionDescription]) {
             self.functions = functions

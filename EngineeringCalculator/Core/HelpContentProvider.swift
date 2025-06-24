@@ -16,6 +16,9 @@ public protocol HelpContentProvider {
     
     /// 오늘의 팁을 가져옵니다
     func getDailyTip() -> CalculatorTip?
+    
+    /// 캐시를 정리합니다 (메모리 관리용)
+    func clearCache()
 }
 
 /// 기본 도움말 컨텐츠 제공자
@@ -331,5 +334,13 @@ public class DefaultHelpContentProvider: HelpContentProvider {
                 difficulty: .intermediate
             )
         ]
+    }
+    
+    // MARK: - Memory Management
+    
+    /// 캐시된 데이터를 정리합니다
+    public func clearCache() {
+        cachedFunctions = nil
+        cachedTips = nil
     }
 } 

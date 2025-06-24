@@ -493,6 +493,9 @@ extension CalculatorViewModel {
         
         // 설정 저장
         settingsStorage.saveSettings(settings)
+        
+        // 상태 변경 알림
+        notifyStateChange()
     }
     
     /// 히스토리 저장소에 대한 읽기 전용 접근자
@@ -594,4 +597,43 @@ extension CalculatorViewModel {
     public func getAllTipsSortedByDifficulty() -> [CalculatorTip] {
         return allTips.sorted { $0.difficulty.sortOrder < $1.difficulty.sortOrder }
     }
+}
+
+// MARK: - App State Management
+
+extension CalculatorViewModel {
+    
+    /// 설정을 다시 로드
+    func loadSettings() {
+        let newSettings = settingsStorage.loadSettings()
+        if newSettings != settings {
+            settings = newSettings
+            
+            // 엔진에 새 설정 적용
+            var mutableEngine = calculatorEngine
+            mutableEngine.angleUnit = settings.angleUnit
+        }
+    }
+    
+    /// 임시 데이터 정리 (메모리 관리)
+    func clearTemporaryData() {
+        // 불필요한 캐시 정리
+        functionDescriptions.removeAll()
+        allTips.removeAll()
+        
+        // 도움말 컨텐츠 다시 로드 (필요시)
+        loadHelpContent()
+    }
+    
+    /// 현재 상태를 AppContainer에 알림
+    private func notifyStateChange() {
+        // AppContainer의 markAsChanged() 호출은 AppContainer에서 직접 처리
+        NotificationCenter.default.post(name: .calculatorStateChanged, object: nil)
+    }
+}
+
+// MARK: - Notification Names
+
+extension Notification.Name {
+    static let calculatorStateChanged = Notification.Name("CalculatorStateChanged")
 } 

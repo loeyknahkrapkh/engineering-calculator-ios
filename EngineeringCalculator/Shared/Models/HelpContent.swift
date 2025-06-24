@@ -45,7 +45,7 @@ public enum FunctionCategory: String, CaseIterable, Codable {
 }
 
 /// 계산기 팁 데이터 모델
-public struct CalculatorTip: Identifiable, Codable, Equatable {
+public struct CalculatorTip: Identifiable, Codable, Equatable, Sendable {
     public let id = UUID()
     public let title: String
     public let content: String

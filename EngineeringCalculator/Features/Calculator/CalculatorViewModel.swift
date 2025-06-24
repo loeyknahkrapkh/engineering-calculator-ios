@@ -31,6 +31,7 @@ public class CalculatorViewModel: ObservableObject {
     private let calculatorEngine: CalculatorEngine
     private let settingsStorage: SettingsStorage
     private let historyStorage: HistoryStorage
+    private let helpContentProvider: HelpContentProvider
     
     // MARK: - Private Properties
     
@@ -43,21 +44,32 @@ public class CalculatorViewModel: ObservableObject {
     /// 괄호 카운터
     private var openParenthesesCount: Int = 0
     
+    /// 함수 설명 캐시
+    private var functionDescriptions: [String: FunctionDescription] = [:]
+    
+    /// 팁 캐시
+    private var allTips: [CalculatorTip] = []
+    
     // MARK: - Initialization
     
     public init(
         calculatorEngine: CalculatorEngine,
         settingsStorage: SettingsStorage,
-        historyStorage: HistoryStorage
+        historyStorage: HistoryStorage,
+        helpContentProvider: HelpContentProvider = DefaultHelpContentProvider()
     ) {
         self.calculatorEngine = calculatorEngine
         self.settingsStorage = settingsStorage
         self.historyStorage = historyStorage
+        self.helpContentProvider = helpContentProvider
         self.settings = settingsStorage.loadSettings()
         
         // 엔진에 설정 적용
         var mutableEngine = calculatorEngine
         mutableEngine.angleUnit = settings.angleUnit
+        
+        // 도움말 컨텐츠 로드
+        loadHelpContent()
     }
     
     // MARK: - Public Methods
@@ -310,8 +322,6 @@ public class CalculatorViewModel: ObservableObject {
         }
     }
     
-
-    
     // MARK: - Private Calculation Methods
     
     /// 계산 실행
@@ -488,5 +498,100 @@ extension CalculatorViewModel {
     /// 히스토리 저장소에 대한 읽기 전용 접근자
     func getHistoryStorage() -> HistoryStorage {
         return historyStorage
+    }
+}
+
+// MARK: - Interactive Help Methods
+
+extension CalculatorViewModel {
+    
+    /// 도움말 컨텐츠 로드
+    private func loadHelpContent() {
+        do {
+            // 함수 설명 로드
+            let functions = try helpContentProvider.loadFunctionDescriptions()
+            functionDescriptions = Dictionary(uniqueKeysWithValues: functions.map { ($0.symbol, $0) })
+            
+            // 팁 로드
+            allTips = try helpContentProvider.loadCalculatorTips()
+        } catch {
+            print("Failed to load help content: \(error)")
+        }
+    }
+    
+    /// 특정 버튼에 대한 함수 설명 가져오기
+    /// - Parameter button: 설명을 가져올 버튼
+    /// - Returns: 함수 설명 (없으면 nil)
+    public func getFunctionDescription(for button: CalculatorButton) -> FunctionDescription? {
+        // 함수나 상수 버튼만 설명 제공
+        guard button.buttonType == .function || button.buttonType == .constant else {
+            return nil
+        }
+        
+        // 버튼 심볼을 함수 설명 심볼로 매핑
+        let symbol = mapButtonToSymbol(button)
+        return functionDescriptions[symbol]
+    }
+    
+    /// 버튼을 함수 설명 심볼로 매핑
+    private func mapButtonToSymbol(_ button: CalculatorButton) -> String {
+        switch button {
+        case .sin: return "sin"
+        case .cos: return "cos"
+        case .tan: return "tan"
+        case .asin: return "asin"
+        case .acos: return "acos"
+        case .atan: return "atan"
+        case .ln: return "ln"
+        case .log: return "log"
+        case .log2: return "log₂"
+        case .exp: return "eˣ"
+        case .pow10: return "10ˣ"
+        case .sqrt: return "√"
+        case .cbrt: return "∛"
+        case .power: return "xʸ"
+        case .pi: return "π"
+        case .e: return "e"
+        default: return button.displayText
+        }
+    }
+    
+    /// 일일 팁을 표시해야 하는지 확인
+    /// - Returns: 일일 팁 표시 여부
+    public func shouldShowDailyTip() -> Bool {
+        let lastShownDate = UserDefaults.standard.object(forKey: "LastDailyTipDate") as? Date
+        let today = Calendar.current.startOfDay(for: Date())
+        
+        // 마지막으로 표시한 날짜가 오늘이 아니면 표시
+        if let lastDate = lastShownDate {
+            let lastShownDay = Calendar.current.startOfDay(for: lastDate)
+            return lastShownDay < today
+        }
+        
+        return true // 한번도 표시하지 않았으면 표시
+    }
+    
+    /// 오늘의 일일 팁 가져오기
+    /// - Returns: 일일 팁 (없으면 nil)
+    public func getDailyTip() -> CalculatorTip? {
+        return helpContentProvider.getDailyTip()
+    }
+    
+    /// 일일 팁을 표시했음을 기록
+    public func markDailyTipAsShown() {
+        UserDefaults.standard.set(Date(), forKey: "LastDailyTipDate")
+    }
+    
+    /// 카테고리별 팁 가져오기
+    /// - Parameter category: 팁 카테고리
+    /// - Returns: 해당 카테고리의 팁들
+    public func getTipsForCategory(_ category: TipCategory) -> [CalculatorTip] {
+        return allTips.filter { $0.category == category }
+    }
+    
+    /// 난이도별로 정렬된 모든 팁 가져오기
+    /// - Returns: 난이도별로 정렬된 팁들
+    public func getAllTipsSortedByDifficulty() -> [CalculatorTip] {
+        return allTips.sorted { $0.difficulty.sortOrder < $1.difficulty.sortOrder }
     }
 } 

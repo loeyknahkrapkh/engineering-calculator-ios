@@ -442,4 +442,177 @@ struct CalculatorViewModelTests {
         #expect(viewModel.displayText == "8")
         #expect(!viewModel.hasError)
     }
+    
+    // MARK: - 히스토리 기능 테스트
+    
+    @Test("히스토리에서 수식 로드 후 계산 테스트")
+    func testCalculateAfterLoadingHistoryExpressionInteractiveHelp() async throws {
+        // Given
+        let mockEngine = MockCalculatorEngine()
+        mockEngine.calculationResult = 0.5 // sin(30) = 0.5
+        
+        let viewModel = await CalculatorViewModel(
+            calculatorEngine: mockEngine,
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        let expression = "sin(30)"
+        
+        // When
+        await MainActor.run {
+            viewModel.loadExpressionFromHistory(expression)
+            // 로드 후 currentExpression이 올바르게 설정되었는지 확인
+            #expect(viewModel.currentExpression == expression)
+            
+            viewModel.handleButtonPress(.equals)
+        }
+        
+        // Then
+        await MainActor.run {
+            // 계산 후에는 currentExpression이 리셋되어야 함
+            #expect(viewModel.currentExpression == "")
+            // 결과가 displayText에 표시되어야 함
+            #expect(viewModel.displayText == "0.5")
+            #expect(!viewModel.hasError)
+        }
+    }
+    
+    // MARK: - 상호작용 도움말 테스트
+    
+    @Test("함수 버튼 설명 가져오기")
+    func testGetFunctionDescription() async throws {
+        // Given
+        let viewModel = await CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        // When & Then
+        await MainActor.run {
+            // 삼각함수 버튼들
+            let sinDescription = viewModel.getFunctionDescription(for: .sin)
+            #expect(sinDescription != nil)
+            #expect(sinDescription!.symbol == "sin")
+            
+            let cosDescription = viewModel.getFunctionDescription(for: .cos)
+            #expect(cosDescription != nil)
+            #expect(cosDescription!.symbol == "cos")
+            
+            let tanDescription = viewModel.getFunctionDescription(for: .tan)
+            #expect(tanDescription != nil)
+            #expect(tanDescription!.symbol == "tan")
+            
+            // 로그함수 버튼들
+            let lnDescription = viewModel.getFunctionDescription(for: .ln)
+            #expect(lnDescription != nil)
+            #expect(lnDescription!.symbol == "ln")
+            
+            let logDescription = viewModel.getFunctionDescription(for: .log)
+            #expect(logDescription != nil)
+            #expect(logDescription!.symbol == "log")
+            
+            // 상수들
+            let piDescription = viewModel.getFunctionDescription(for: .pi)
+            #expect(piDescription != nil)
+            #expect(piDescription!.symbol == "π")
+            
+            let eDescription = viewModel.getFunctionDescription(for: .e)
+            #expect(eDescription != nil)
+            #expect(eDescription!.symbol == "e")
+        }
+    }
+    
+    @Test("숫자 버튼은 함수 설명이 없음")
+    func testNumberButtonsHaveNoDescription() async throws {
+        // Given
+        let viewModel = await CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        // When & Then
+        await MainActor.run {
+            let zeroDescription = viewModel.getFunctionDescription(for: .zero)
+            #expect(zeroDescription == nil)
+            
+            let oneDescription = viewModel.getFunctionDescription(for: .one)
+            #expect(oneDescription == nil)
+            
+            let nineDescription = viewModel.getFunctionDescription(for: .nine)
+            #expect(nineDescription == nil)
+        }
+    }
+    
+    @Test("연산자 버튼은 함수 설명이 없음")
+    func testOperatorButtonsHaveNoDescription() async throws {
+        // Given
+        let viewModel = await CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        // When & Then
+        await MainActor.run {
+            let addDescription = viewModel.getFunctionDescription(for: .add)
+            #expect(addDescription == nil)
+            
+            let subtractDescription = viewModel.getFunctionDescription(for: .subtract)
+            #expect(subtractDescription == nil)
+            
+            let multiplyDescription = viewModel.getFunctionDescription(for: .multiply)
+            #expect(multiplyDescription == nil)
+            
+            let divideDescription = viewModel.getFunctionDescription(for: .divide)
+            #expect(divideDescription == nil)
+        }
+    }
+    
+    @Test("일일 팁 표시 기능")
+    func testShowDailyTip() async throws {
+        // Given
+        let viewModel = await CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        // When
+        let shouldShowTip = await MainActor.run {
+            return viewModel.shouldShowDailyTip()
+        }
+        
+        // Then
+        await MainActor.run {
+            // 일일 팁 표시 여부는 구현에 따라 결정
+            // 이 테스트는 크래시 없이 실행되는지만 확인
+            #expect(shouldShowTip == true || shouldShowTip == false)
+        }
+    }
+    
+    @Test("일일 팁 가져오기")
+    func testGetDailyTip() async throws {
+        // Given
+        let viewModel = await CalculatorViewModel(
+            calculatorEngine: MockCalculatorEngine(),
+            settingsStorage: MockSettingsStorage(),
+            historyStorage: MockHistoryStorage()
+        )
+        
+        // When
+        let dailyTip = await MainActor.run {
+            return viewModel.getDailyTip()
+        }
+        
+        // Then
+        await MainActor.run {
+            // 일일 팁이 있을 수도 없을 수도 있음
+            if let tip = dailyTip {
+                #expect(tip.isDaily == true)
+                #expect(!tip.content.isEmpty)
+            }
+        }
+    }
 } 

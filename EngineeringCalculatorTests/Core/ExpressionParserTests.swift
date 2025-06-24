@@ -221,4 +221,34 @@ struct ExpressionParserTests {
         let expectedResult = 1.0 + 1.0  // 2.0
         #expect(abs(result - expectedResult) < 0.0001)
     }
+    
+    // MARK: - Performance Tests
+    
+    @Test("성능 검증 - 간단한 계산 응답 시간")
+    func performanceSimpleCalculation() {
+        let engine = ScientificCalculatorEngine()
+        let expression = "2 + 3 * 4"
+        
+        // 단일 계산이 1ms 이내에 완료되는지 확인
+        let startTime = CFAbsoluteTimeGetCurrent()
+        _ = try? engine.calculate(expression)
+        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+        
+        // 1ms 이내 응답 (사용자 체감 지연 없음)
+        #expect(timeElapsed < 0.001)
+    }
+    
+    @Test("성능 검증 - 복잡한 계산 응답 시간")
+    func performanceComplexCalculation() {
+        let engine = ScientificCalculatorEngine()
+        let expression = "sin(30) + cos(45) * log(10) + sqrt(25) / (2 + 3)"
+        
+        // 복잡한 계산도 10ms 이내에 완료되는지 확인
+        let startTime = CFAbsoluteTimeGetCurrent()
+        _ = try? engine.calculate(expression)
+        let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+        
+        // 10ms 이내 응답 (여전히 사용자 체감 지연 없음)
+        #expect(timeElapsed < 0.01)
+    }
 } 

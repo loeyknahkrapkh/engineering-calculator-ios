@@ -1,7 +1,7 @@
 import Foundation
 
 /// 계산 히스토리 모델
-public struct CalculationHistory: Identifiable, Codable, Equatable {
+public struct CalculationHistory: Identifiable, Codable, Equatable, Sendable {
     /// 고유 식별자
     public let id: UUID
     

@@ -8,15 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var appContainer = AppContainer()
+    
     var body: some View {
         CalculatorView(
-            viewModel: CalculatorViewModel(
-                calculatorEngine: ScientificCalculatorEngine(),
-                settingsStorage: UserDefaultsSettingsStorage(),
-                historyStorage: InMemoryHistoryStorage()
-            )
+            viewModel: appContainer.calculatorViewModel,
+            appContainer: appContainer
         )
         .preferredColorScheme(.light) // 기본 라이트 모드
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+            appContainer.applicationDidEnterBackground()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            appContainer.applicationWillEnterForeground()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
+            appContainer.applicationWillTerminate()
+        }
     }
 }
 

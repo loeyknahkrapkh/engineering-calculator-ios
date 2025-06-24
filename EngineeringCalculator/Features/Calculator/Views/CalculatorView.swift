@@ -3,6 +3,7 @@ import SwiftUI
 /// 공학용 계산기 메인 화면 (세로 모드 전용)
 struct CalculatorView: View {
     @StateObject private var viewModel: CalculatorViewModel
+    let appContainer: AppContainer
     @State private var showHistory = false
     @State private var showHelp = false
     @State private var showFunctionPopup = false
@@ -10,8 +11,9 @@ struct CalculatorView: View {
     @State private var showDailyTip = false
     @State private var dailyTip: CalculatorTip?
     
-    init(viewModel: CalculatorViewModel) {
+    init(viewModel: CalculatorViewModel, appContainer: AppContainer) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.appContainer = appContainer
     }
     
     var body: some View {
@@ -74,18 +76,38 @@ struct CalculatorView: View {
             checkForDailyTip()
         }
         .sheet(isPresented: $showHistory) {
-            let historyViewModel = HistoryViewModel(historyStorage: viewModel.getHistoryStorage())
-            HistoryView(
-                viewModel: historyViewModel,
-                onHistorySelected: { expression in
-                    viewModel.loadExpressionFromHistory(expression)
-                    showHistory = false
+            let historyViewModel = appContainer.makeHistoryViewModel()
+            NavigationView {
+                HistoryView(
+                    viewModel: historyViewModel,
+                    onHistorySelected: { expression in
+                        viewModel.loadExpressionFromHistory(expression)
+                        showHistory = false
+                    }
+                )
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("완료") {
+                            showHistory = false
+                        }
+                    }
                 }
-            )
+            }
         }
         .sheet(isPresented: $showHelp) {
-            // TODO: HelpView 구현 후 연결
-            Text("Help View")
+            let helpViewModel = appContainer.makeHelpViewModel()
+            NavigationView {
+                HelpView(viewModel: helpViewModel)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("완료") {
+                                showHelp = false
+                            }
+                        }
+                    }
+            }
         }
     }
     
@@ -338,26 +360,22 @@ struct CalculatorView: View {
 // MARK: - Preview
 
 #Preview("Calculator View") {
+    let container = AppContainer()
     NavigationView {
         CalculatorView(
-            viewModel: CalculatorViewModel(
-                calculatorEngine: ScientificCalculatorEngine(),
-                settingsStorage: UserDefaultsSettingsStorage(),
-                historyStorage: InMemoryHistoryStorage()
-            )
+            viewModel: container.calculatorViewModel,
+            appContainer: container
         )
     }
     .preferredColorScheme(.light)
 }
 
 #Preview("Calculator View Dark") {
+    let container = AppContainer()
     NavigationView {
         CalculatorView(
-            viewModel: CalculatorViewModel(
-                calculatorEngine: ScientificCalculatorEngine(),
-                settingsStorage: UserDefaultsSettingsStorage(),
-                historyStorage: InMemoryHistoryStorage()
-            )
+            viewModel: container.calculatorViewModel,
+            appContainer: container
         )
     }
     .preferredColorScheme(.dark)

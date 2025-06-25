@@ -99,14 +99,6 @@ struct CalculatorView: View {
             let helpViewModel = appContainer.makeHelpViewModel()
             NavigationView {
                 HelpView(viewModel: helpViewModel)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("완료") {
-                                showHelp = false
-                            }
-                        }
-                    }
             }
         }
     }

@@ -15,44 +15,42 @@ struct HelpView: View {
     // MARK: - Body
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                // 탭 바
-                helpTabBar
-                
-                // 컨텐츠 영역
-                Group {
-                    if viewModel.isLoading {
-                        loadingView
-                    } else if viewModel.hasError {
-                        errorView
-                    } else if viewModel.isEmpty {
-                        emptyStateView
-                    } else {
-                        contentView
+        VStack(spacing: 0) {
+            // 탭 바
+            helpTabBar
+            
+            // 컨텐츠 영역
+            Group {
+                if viewModel.isLoading {
+                    loadingView
+                } else if viewModel.hasError {
+                    errorView
+                } else if viewModel.isEmpty {
+                    emptyStateView
+                } else {
+                    contentView
+                }
+            }
+        }
+        .navigationTitle("도움말")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("닫기") {
+                    dismiss()
+                }
+            }
+            
+            if selectedTab == .functions && viewModel.hasContent {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("필터") {
+                        showingCategoryFilter = true
                     }
                 }
             }
-            .navigationTitle("도움말")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("닫기") {
-                        dismiss()
-                    }
-                }
-                
-                if selectedTab == .functions && viewModel.hasContent {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("필터") {
-                            showingCategoryFilter = true
-                        }
-                    }
-                }
-            }
-            .confirmationDialog("카테고리 선택", isPresented: $showingCategoryFilter) {
-                categoryFilterDialog
-            }
+        }
+        .confirmationDialog("카테고리 선택", isPresented: $showingCategoryFilter) {
+            categoryFilterDialog
         }
         .task {
             await viewModel.loadContent()

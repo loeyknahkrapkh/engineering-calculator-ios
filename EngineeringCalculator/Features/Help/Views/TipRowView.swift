@@ -24,10 +24,12 @@ struct TipRowView: View {
                                 .font(.caption)
                                 .foregroundColor(.yellow)
                         }
-                        ForEach((tip.difficulty.sortOrder + 1)...3, id: \.self) { _ in
-                            Image(systemName: "star")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                        if tip.difficulty.sortOrder < 3 {
+                            ForEach((tip.difficulty.sortOrder + 1)...3, id: \.self) { _ in
+                                Image(systemName: "star")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 }

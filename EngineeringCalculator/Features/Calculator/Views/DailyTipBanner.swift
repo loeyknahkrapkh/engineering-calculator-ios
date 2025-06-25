@@ -55,12 +55,15 @@ struct DailyTipBanner: View {
             }
         }
         .padding(12)
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .background(
+            Color(.systemBackground)
+                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+        )
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.15), radius: 12, x: 0, y: 6)
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.orange.opacity(0.2), lineWidth: 1)
         )
     }
 }
